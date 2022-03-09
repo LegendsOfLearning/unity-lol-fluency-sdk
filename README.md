@@ -90,7 +90,7 @@ void OnPlayData (PlayData playData)
 # Testing
 These testing urls point to a "wrapper" that mimics the fluency player.
 
-Tests are using query params to mimic the player session data. When the client loads it'll display the data. The `send results` button will log the trails array to the console.
+Tests are using query params to mimic the player session data. When the client loads it'll display the data. The `send results` button will log the `trials` array to the console.
 
 Assessment
 

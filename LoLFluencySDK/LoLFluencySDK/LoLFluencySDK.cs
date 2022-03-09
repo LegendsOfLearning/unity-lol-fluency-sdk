@@ -333,14 +333,14 @@ namespace LoL.Fluency
     [Serializable]
     internal class ResultBase : IResultable
     {
-        public List<FluencyTrialInput> trails;
+        public List<FluencyTrialInput> trials;
 
         public void AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMS)
         {
-            if (trails == null)
-                trails = new List<FluencyTrialInput>();
+            if (trials == null)
+                trials = new List<FluencyTrialInput>();
 
-            trails.Add(new FluencyTrialInput
+            trials.Add(new FluencyTrialInput
             {
                 a = a,
                 b = b,
