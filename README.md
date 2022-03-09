@@ -13,7 +13,7 @@ Sent game message to iframe:
 }
 ```
 
-The SDK can be given to 3rd party or internal devs creating an game type for the fluency session. ( `ASSESSMENT`, `PRACTICE`, `PLAY` )
+The SDK can be given to 3rd party or internal devs creating any game type for the fluency session. ( `ASSESSMENT`, `PRACTICE`, `PLAY` )
 The game created by the dev could implement all of the game types or any subset.
 The data fed from the fluency game player will dictate what type of game the client should show.
 
@@ -90,7 +90,7 @@ void OnPlayData (PlayData playData)
 # Testing
 These testing urls point to a "wrapper" that mimics the fluency player.
 
-Tests are using query params to mimic the player session data. When the client loads it'll display the data. The send results will log the trails array to the console.
+Tests are using query params to mimic the player session data. When the client loads it'll display the data. The `send results` button will log the trails array to the console.
 
 Assessment
 
