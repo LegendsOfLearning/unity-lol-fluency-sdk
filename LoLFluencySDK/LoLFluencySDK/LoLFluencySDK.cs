@@ -67,8 +67,8 @@ namespace LoL.Fluency
 
             var sdk = Create();
             sdk._onAssessmentData = onAssessmentData;
-            sdk._fluencyClientInfo._gameType |= GameType.ASSESSMENT;
-            sdk._fluencyClientInfo._gameTypeSet = true;
+            sdk._fluencyClientInfo._gameType.value |= GameType.ASSESSMENT;
+            sdk._fluencyClientInfo._gameType.isSet = true;
             return new AssessmentResult();
         }
 
@@ -82,8 +82,8 @@ namespace LoL.Fluency
 
             var sdk = Create();
             sdk._onPracticeData = onPracticeData;
-            sdk._fluencyClientInfo._gameType |= GameType.PRACTICE;
-            sdk._fluencyClientInfo._gameTypeSet = true;
+            sdk._fluencyClientInfo._gameType.value |= GameType.PRACTICE;
+            sdk._fluencyClientInfo._gameType.isSet = true;
             return new PracticeResult();
         }
 
@@ -97,8 +97,8 @@ namespace LoL.Fluency
 
             var sdk = Create();
             sdk._onPlayData = onPlayData;
-            sdk._fluencyClientInfo._gameType |= GameType.PLAY;
-            sdk._fluencyClientInfo._gameTypeSet = true;
+            sdk._fluencyClientInfo._gameType.value |= GameType.PLAY;
+            sdk._fluencyClientInfo._gameType.isSet = true;
             return new PlayResult();
         }
 
@@ -131,11 +131,11 @@ namespace LoL.Fluency
                 error += "\nData version: " + expectedClientInfo.version;
                 error += "\nRequested game type: " + expectedClientInfo.GameType.ToString();
                 error += "\nClient supported game types:";
-                if (_fluencyClientInfo._gameType.HasFlag(GameType.ASSESSMENT))
+                if (_fluencyClientInfo._gameType.value.HasFlag(GameType.ASSESSMENT))
                     error += " " + GameType.ASSESSMENT.ToString();
-                if (_fluencyClientInfo._gameType.HasFlag(GameType.PRACTICE))
+                if (_fluencyClientInfo._gameType.value.HasFlag(GameType.PRACTICE))
                     error += " " + GameType.PRACTICE.ToString();
-                if (_fluencyClientInfo._gameType.HasFlag(GameType.PLAY))
+                if (_fluencyClientInfo._gameType.value.HasFlag(GameType.PLAY))
                     error += " " + GameType.PLAY.ToString();
                 Debug.LogError(error);
                 return;
@@ -168,40 +168,54 @@ namespace LoL.Fluency
         PLAY = 1 << 2,
     }
 
+    internal struct UnityStringEnum<TEnum> where TEnum : struct
+    {
+        public bool isSet;
+        public TEnum value;
+        public TEnum Value(string strValue, bool replace = false)
+        {
+            if(isSet && !replace)
+                return value;
+
+            if (string.IsNullOrEmpty(strValue))
+            {
+                Debug.LogError($"{typeof(TEnum)} string value not set.");
+                return default;
+            }
+
+            if (Enum.TryParse<TEnum>(strValue, true, out var result))
+            {
+                value = result;
+                isSet = true;
+            }
+            else
+            {
+                Debug.LogError($"{strValue} value not found in {typeof(TEnum)} enum.");
+            }
+
+            return result;
+        }
+    }
+
     [Serializable]
     internal class FluencyClientInfo
     {
         public const string Version = "1.0.0";
 
-        public string gameType;
-        public string version;
+        public string gameType = default;
+        public string version = default;
 
-        public bool _gameTypeSet;
-        public GameType _gameType;
+        public UnityStringEnum<GameType> _gameType;
         public GameType GameType
         {
             get
             {
-                if (_gameTypeSet)
-                    return _gameType;
-
-                if (string.IsNullOrEmpty(gameType))
+                if (EqualityComparer<UnityStringEnum<GameType>>.Default.Equals(_gameType, default))
                 {
-                    Debug.LogError("[FluencyClientInfo] gameType value not set.");
-                    return default;
+                    _gameType = new UnityStringEnum<GameType>();
                 }
 
-                if (Enum.TryParse<GameType>(gameType, true, out var result))
-                {
-                    _gameType = result;
-                    _gameTypeSet = true;
-                }
-                else
-                {
-                    Debug.LogError($"[FluencyClientInfo] {gameType} value not found in GameType enum.");
-                }
-
-                return result;
+                return _gameType.Value(gameType);
             }
         }
 
@@ -228,32 +242,17 @@ namespace LoL.Fluency
         public int b;
         public string op;
 
-        bool _operationSet;
-        FluencyFactOperation _operation;
+        UnityStringEnum<FluencyFactOperation> _operation;
         public FluencyFactOperation Operation
         {
             get
             {
-                if (_operationSet)
-                    return _operation;
-
-                if (string.IsNullOrEmpty(op))
+                if (EqualityComparer<UnityStringEnum<FluencyFactOperation>>.Default.Equals(_operation, default))
                 {
-                    Debug.LogError("[FluencyFact] op value not set.");
-                    return default;
+                    _operation = new UnityStringEnum<FluencyFactOperation>();
                 }
 
-                if (Enum.TryParse<FluencyFactOperation>(op, true, out var result))
-                {
-                    _operation = result;
-                    _operationSet = true;
-                }
-                else
-                {
-                    Debug.LogError($"[FluencyFact] {op} value not found in FluencyFactOperation enum.");
-                }
-
-                return result;
+                return _operation.Value(op);
             }
         }
     }
@@ -286,32 +285,17 @@ namespace LoL.Fluency
         public FluencyFact[] target_facts;
         public FluencyFact[] facts;
 
-        bool _conceptSet;
-        FluencySessionPracticeConcept _concept;
+        UnityStringEnum<FluencySessionPracticeConcept> _concept;
         public FluencySessionPracticeConcept Concept
         {
             get
             {
-                if (_conceptSet)
-                    return _concept;
-
-                if (string.IsNullOrEmpty(concept))
+                if (EqualityComparer<UnityStringEnum<FluencySessionPracticeConcept>>.Default.Equals(_concept, default))
                 {
-                    Debug.LogError("[PracticeData] concept value not set.");
-                    return default;
+                    _concept = new UnityStringEnum<FluencySessionPracticeConcept>();
                 }
 
-                if (Enum.TryParse<FluencySessionPracticeConcept>(concept, true, out var result))
-                {
-                    _concept = result;
-                    _conceptSet = true;
-                }
-                else
-                {
-                    Debug.LogError($"[PracticeData] {concept} value not found in FluencySessionPracticeConcept enum.");
-                }
-
-                return result;
+                return _concept.Value(concept);
             }
         }
     }
