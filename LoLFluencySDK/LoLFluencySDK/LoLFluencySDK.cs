@@ -7,23 +7,28 @@ namespace LoL.Fluency
 {
     public class LoLFluencySDK : MonoBehaviour
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
         private static extern void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion);
         [DllImport("__Internal")]
         private static extern void _PostWindowMessage (string msg, string payload);
-#else
-        static void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion)
+
+        static void _EditorGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion)
         {
             Debug.Log(gameObjectName + " : " + functionName);
             string json;
-            switch (UnityEngine.Random.Range(0, 3))
+            switch (UnityEngine.Random.Range(0, 5))
             {
                 case 1:
                     json = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""ADD""}],""target_facts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
                     break;
                 case 2:
                     json = @"{""gameType"":""PLAY"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""DIV""}],""target_facts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                    break;
+                case 3:
+                    json = @"{""gameType"":""TESTING FAIL"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""SUB""}]}";
+                    break;
+                case 4:
+                    json = @"{""gameType"":""PLAY"",""version"":""2.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""SUB""}]}";
                     break;
                 default:
                     json = @"{""gameType"":""ASSESSMENT"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""SUB""}]}";
@@ -32,11 +37,10 @@ namespace LoL.Fluency
             _Instance.ReceiveData(json);
         }
 
-        static void _PostWindowMessage (string msg, string payload)
+        static void _EditorPostWindowMessage (string msg, string payload)
         {
             Debug.Log("Post message: " + msg + " : " + payload);
         }
-#endif
 
         static LoLFluencySDK _Instance;
         static LoLFluencySDK Create ()
@@ -111,14 +115,27 @@ namespace LoL.Fluency
             }
 
             // Call into jslib.
-            _GameIsReady(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version);
+            Action<string, string, string, string> gameIsReady;
+            if(Application.isEditor)
+                gameIsReady = _EditorGameIsReady;
+            else
+                gameIsReady = _GameIsReady;
+
+            gameIsReady(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version);
         }
 
         public static void SendResults (IResultable resultable)
         {
             // Call into jslib.
             var json = JsonUtility.ToJson(resultable);
-            _PostWindowMessage("results", json);
+
+            Action<string, string> postWindowMessage;
+            if(Application.isEditor)
+                postWindowMessage = _EditorPostWindowMessage;
+            else
+                postWindowMessage = _PostWindowMessage;
+
+            postWindowMessage("results", json);
         }
 
         public void ReceiveData (string json)
@@ -210,11 +227,6 @@ namespace LoL.Fluency
         {
             get
             {
-                if (EqualityComparer<UnityStringEnum<GameType>>.Default.Equals(_gameType, default))
-                {
-                    _gameType = new UnityStringEnum<GameType>();
-                }
-
                 return _gameType.Value(gameType);
             }
         }
@@ -247,11 +259,6 @@ namespace LoL.Fluency
         {
             get
             {
-                if (EqualityComparer<UnityStringEnum<FluencyFactOperation>>.Default.Equals(_operation, default))
-                {
-                    _operation = new UnityStringEnum<FluencyFactOperation>();
-                }
-
                 return _operation.Value(op);
             }
         }
@@ -290,11 +297,6 @@ namespace LoL.Fluency
         {
             get
             {
-                if (EqualityComparer<UnityStringEnum<FluencySessionPracticeConcept>>.Default.Equals(_concept, default))
-                {
-                    _concept = new UnityStringEnum<FluencySessionPracticeConcept>();
-                }
-
                 return _concept.Value(concept);
             }
         }

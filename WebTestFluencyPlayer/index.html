@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Legends of Learning | Fluency Gameframe</title>
+  <script>
+    const getQueryParams = (url) => {
+        let queryParams = {};
+        //create an anchor tag to use the property called search
+        let anchor = document.createElement('a');
+        //assigning url to href of anchor tag
+        anchor.href = url;
+        //search property returns the query string of url
+        let queryStrings = anchor.search.substring(1);
+        let params = queryStrings.split('&');
+
+        for (var i = 0; i < params.length; i++) {
+            var pair = params[i].split('=');
+            queryParams[pair[0]] = decodeURIComponent(pair[1]);
+        }
+        return queryParams;
+    };
+
+    sendGameMessage = (messageName, payload) => {
+      payload = payload ? JSON.stringify(payload) : null
+
+      const iframe = document.getElementsByClassName('lol-fluency-game-iframe')[0]
+      if (iframe) {
+        console.info('[UBER GAMEFRAME] - 📡 Sent game message to iframe:')
+        iframe.contentWindow.postMessage({ messageName, payload }, '*')
+      } else {
+        console.info('[UBER GAMEFRAME] - 📡 Sent game message to window:')
+        window.postMessage({ messageName, payload }, '*')
+      }
+
+      console.info({ messageName, payload })
+    }
+
+    receiveGameMessages = ({
+      data,
+    }) => {
+      let { message, payload = null } = data
+      if (!message) return
+
+      const messageHandlers = {
+        init: (m, p) =>  {
+          let queryParams = getQueryParams(window.location.href);
+          // Send in start data
+          let payload = JSON.parse(queryParams['data'])
+          payload['gameType'] =  queryParams['gameType']
+          payload['version'] =  queryParams['version']
+          this.sendGameMessage('start', payload)
+        },
+        results: (m,p) => console.log('RESULTS', p)
+      }
+
+      const handler = messageHandlers[message]
+      const isValid = typeof message === 'string' && typeof handler === 'function'
+
+      if (!isValid) {
+        return
+      }
+
+      console.info('[UBER GAMEFRAME] - ⤵️ Received game message:', message, payload)
+      payload =
+        payload && typeof payload === 'string' ? JSON.parse(payload) : payload
+
+      if (isValid) handler(message, payload)
+    }
+
+    window.addEventListener('message', this.receiveGameMessages)
+  </script>
+</head>
+
+<body>
+  <iframe height="650px" width="960px" class="lol-fluency-game-iframe" scrolling="no" src="fluencySDK/index.html"
+    style="border: none; left: 50%; top: 50px; position: absolute; transform: scale(1) translateX(-50%); transform-origin: 0px 0px;">
+  </iframe>
+</body>
+
+</html>
