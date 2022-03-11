@@ -51,9 +51,14 @@
           let payload = JSON.parse(queryParams['data'])
           payload['gameType'] =  queryParams['gameType']
           payload['version'] =  queryParams['version']
+          payload['userId'] =  queryParams['userId']
           this.sendGameMessage('start', payload)
         },
-        results: (m,p) => console.log('RESULTS', p)
+        results: (m,p) => console.log('RESULTS', p),
+        speakText: (m, p) => console.log('[TTS] speak text', p),
+        speakTextCancel: (m, p) => console.log('[TTS] speak text cancel', p),
+        loadState: (m, p) => console.log('[UserState] get state from dynamic state db table'),
+        saveState: (m, p) => console.log('[UserState] write state from dynamic state db table'),
       }
 
       const handler = messageHandlers[message]
