@@ -1,7 +1,7 @@
 {
     "name": "com.legends-of-learning.fluency-sdk",
     "displayName": "Legends of Learning Fluency SDK",
-    "version": "0.1.0-preview",
+    "version": "0.1.1-preview",
     "unity": "2020.3",
     "description": "SDK for webgl fluency games.",
     "dependencies": {},

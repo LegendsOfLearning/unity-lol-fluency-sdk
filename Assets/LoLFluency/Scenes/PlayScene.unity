@@ -279,6 +279,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2557510101258870211, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
+      propertyPath: m_Text
+      value: Add Result
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934202356816523042, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
+      propertyPath: m_Name
+      value: AddButton
+      objectReference: {fileID: 0}
     - target: {fileID: 9210755554748543645, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
       propertyPath: m_Name
       value: Canvas

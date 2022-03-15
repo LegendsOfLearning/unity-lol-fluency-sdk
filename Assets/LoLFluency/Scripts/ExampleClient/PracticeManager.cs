@@ -22,9 +22,12 @@ namespace SomeDev.Test
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+            if (!(FluencyGameInit.PracticeStartData.targetFacts is null))
             {
-                value += $"\n{fact.a} {fact.op} {fact.b}";
+                foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+                {
+                    value += $"\n{fact.a} {fact.op} {fact.b}";
+                }
             }
             text.text = value;
 
@@ -39,10 +42,15 @@ namespace SomeDev.Test
             {
                 LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
-            foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+
+            if (!(FluencyGameInit.PracticeStartData.targetFacts is null))
             {
-                LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
+                foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+                {
+                    LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
+                }
             }
+
             LoL.Fluency.LoLFluencySDK.SendResults();
         }
 

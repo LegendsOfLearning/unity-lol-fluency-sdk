@@ -181,7 +181,11 @@ namespace LoL.Fluency
             }
 
             // Call into jslib.
-            var json = JsonUtility.ToJson(_SessionResults);
+            var json = _SessionResults.SerializeAndClear();
+            // Empty results.
+            if (string.IsNullOrEmpty(json))
+                return;
+
             PostWindowMessage("results", json);
         }
 
@@ -236,7 +240,7 @@ namespace LoL.Fluency
             {
                 _Instance.StopCoroutine(_Instance._timerRoutine);
             }
-            _Instance._timerRoutine = _Instance.StartCoroutine(_Instance.LoadDataTimeOuter());
+            _Instance._timerRoutine = _Instance.StartCoroutine(_Instance._LoadDataTimeOuter());
 
             PostWindowMessage("loadState", "{}");
         }
@@ -296,14 +300,28 @@ namespace LoL.Fluency
         }
 
         private Coroutine _timerRoutine;
-        private readonly WaitForSeconds _timeoutTime = new WaitForSeconds(10f);
+        private readonly WaitForSeconds _loadStateTimeoutTime = new WaitForSeconds(10f);
+        private readonly WaitForSeconds _sendResultsTimeoutTime = new WaitForSeconds(10f);
 
-        private IEnumerator LoadDataTimeOuter ()
+        private IEnumerator _LoadDataTimeOuter ()
         {
-            yield return _timeoutTime;
+            yield return _loadStateTimeoutTime;
             _timerRoutine = null;
             Debug.Log("Remote state load timed out, continuing load with null data.");
             _OnLoadState?.Invoke(null);
+        }
+
+        private IEnumerator _SendResultOnInterval ()
+        {
+            // Auto send results on play game type only.
+            if (_FluencyClientInfo.playerGameType != GameType.PLAY)
+                yield break;
+
+            while (true)
+            {
+                yield return _sendResultsTimeoutTime;
+                SendResults();
+            }
         }
 
         public static void SaveGameState<T> (T data, Action<bool> onSaveStateResult = null) where T : class
@@ -439,6 +457,9 @@ namespace LoL.Fluency
                     _SessionResults = new PlayResult();
                     var playData = JsonUtility.FromJson<PlayData>(json);
                     _OnPlayData(playData);
+
+                    // Invoke SendResults on interval.
+                    _Instance.StartCoroutine(_Instance._SendResultOnInterval());
                     break;
             }
         }
@@ -652,6 +673,7 @@ namespace LoL.Fluency
     internal interface IResultable
     {
         void AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMS);
+        string SerializeAndClear ();
     }
 
     [Serializable]
@@ -673,6 +695,16 @@ namespace LoL.Fluency
                 startTime = startTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 latencyMs = latencyMs
             });
+        }
+
+        public string SerializeAndClear ()
+        {
+            if (trials == null || trials.Count == 0)
+                return null;
+
+            var json = JsonUtility.ToJson(this);
+            trials.Clear();
+            return json;
         }
     }
 
