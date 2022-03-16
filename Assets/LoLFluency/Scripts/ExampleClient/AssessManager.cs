@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SomeDev.Test
 {
-    public class PlayManager : MonoBehaviour
+    public class AssessManager : MonoBehaviour
     {
         [SerializeField] Text title;
         [SerializeField] Text text;
@@ -14,19 +14,11 @@ namespace SomeDev.Test
 
         void Start ()
         {
-            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inPlay", "IN PLAY");
+            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inAssess", "IN ASSESS");
             var value = "FACTS";
-            foreach (var fact in FluencyGameInit.PlayStartData.facts)
+            foreach (var fact in FluencyGameInit.AssessStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
-            }
-            value += "\n\nTARGET FACTS";
-            if (!(FluencyGameInit.PlayStartData.targetFacts is null))
-            {
-                foreach (var fact in FluencyGameInit.PlayStartData.targetFacts)
-                {
-                    value += $"\n{fact.a} {fact.op} {fact.b}";
-                }
             }
             text.text = value;
 
@@ -37,19 +29,11 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.PlayStartData.facts)
+            foreach (var fact in FluencyGameInit.AssessStartData.facts)
             {
                 LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
-
-            if (FluencyGameInit.PlayStartData.targetFacts is null)
-                return;
-            foreach (var fact in FluencyGameInit.PlayStartData.targetFacts)
-            {
-                LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
-            }
-            // Send is sent on an interval for play.
-            //LoL.Fluency.LoLFluencySDK.SendResults();
+            LoL.Fluency.LoLFluencySDK.SendResults();
         }
 
         void Save ()

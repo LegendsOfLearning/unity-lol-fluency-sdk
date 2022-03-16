@@ -1,0 +1,7 @@
+* text=auto
+*.meta text eol=lf
+*.mat text eol=lf
+*.prefab text eol=lf
+*.unity text eol=lf
+*.asset text eol=lf
+**/packages-lock.json text eol=lf

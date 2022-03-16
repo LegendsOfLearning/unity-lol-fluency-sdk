@@ -14,36 +14,45 @@ namespace SomeDev.Test
 
     public class FluencyGameInit : MonoBehaviour
     {
-        public static AssessmentData AssessmentStartData { get; private set; }
-        public static PracticeData PracticeStartData { get; private set; }
-        public static PlayData PlayStartData { get; private set; }
+        public static AssessData AssessStartData { get; private set; }
+        public static InstructData InstructStartData { get; private set; }
+        public static RetrieveData RetrieveStartData { get; private set; }
 
         // Start is called before the first frame update
         void Start ()
         {
-            LoLFluencySDK.InitAssessment(OnAssessmentData);
-            LoLFluencySDK.InitPractice(OnPracticeData);
-            LoLFluencySDK.InitPlay(OnPlayData);
+            // Register for all game types your build can support.
+            LoLFluencySDK.InitAssess(OnAssessStart);
+            LoLFluencySDK.InitInstruct(OnInstructStart);
+            LoLFluencySDK.InitRetrieve(OnRetrieveStart);
 
+            // Let the sdk know to alert the Fluency Player that the client is ready.
             LoLFluencySDK.GameIsReady();
+
+            // If you don't use a static variable for your start data, you can get the starting data from the sdk.
+            // var retrieveStartData = LoLFluencySDK.GetStartData<RetrieveData>();
+
+            // NOTE: if you try to get starting data for a game type that isn't valid for that session, you'll get null.
+            // i.e. Fluency Player starts a game type: INSTRUCT session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
+            // So make sure the game sessions are separated in your unity client if your build can support multiple game types.
         }
 
-        void OnAssessmentData (AssessmentData assessmentData)
+        void OnAssessStart (AssessData assessData)
         {
-            AssessmentStartData = assessmentData;
-            SceneManager.LoadSceneAsync("AssessmentScene");
+            AssessStartData = assessData;
+            SceneManager.LoadSceneAsync("AssessScene");
         }
 
-        void OnPracticeData (PracticeData practiceData)
+        void OnInstructStart (InstructData instructData)
         {
-            PracticeStartData = practiceData;
-            SceneManager.LoadSceneAsync("PracticeScene");
+            InstructStartData = instructData;
+            SceneManager.LoadSceneAsync("InstructScene");
         }
 
-        void OnPlayData (PlayData playData)
+        void OnRetrieveStart (RetrieveData retrieveData)
         {
-            PlayStartData = playData;
-            SceneManager.LoadSceneAsync("PlayScene");
+            RetrieveStartData = retrieveData;
+            SceneManager.LoadSceneAsync("RetrieveScene");
         }
     }
 }

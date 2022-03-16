@@ -16,17 +16,17 @@ namespace LoL.Fluency
         static void _EditorGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
             string json;
-            if (_FluencyClientInfo.GameType.HasFlag(GameType.PLAY))
+            if (_FluencyClientInfo.GameType.HasFlag(GameType.RETRIEVE))
             {
-                json = @"{""gameType"":""PLAY"",""version"":""1.0.0"",""facts"":[{""a"":4,""b"":2,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                json = @"{""gameType"":""RETRIEVE"",""version"":""1.0.0"",""facts"":[{""a"":4,""b"":2,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
             }
-            else if (_FluencyClientInfo.GameType.HasFlag(GameType.PRACTICE))
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.INSTRUCT))
             {
-                json = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                json = @"{""gameType"":""INSTRUCT"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
             }
-            else if (_FluencyClientInfo.GameType.HasFlag(GameType.ASSESSMENT))
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.ASSESS))
             {
-                json = @"{""gameType"":""ASSESSMENT"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
+                json = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
             }
             else
             {
@@ -49,6 +49,7 @@ namespace LoL.Fluency
                 case "language":
                     var entries = new KeyValueData[]
                         {
+                            new KeyValueData { key = "test", value = "TESTING LANGUAGE" },
                             new KeyValueData { key = "title", value = "LoL Fluency SDK" },
                             new KeyValueData { key = "start", value = "Start Game" },
                             new KeyValueData { key = "highscore", value = "High Score" },
@@ -83,57 +84,95 @@ namespace LoL.Fluency
 
         static FluencyClientInfo _FluencyClientInfo;
 
-        static Action<AssessmentData> _OnAssessmentData;
-        static Action<PracticeData> _OnPracticeData;
-        static Action<PlayData> _OnPlayData;
+        static Action<AssessData> _OnAssessStart;
+        static Action<InstructData> _OnInstructStart;
+        static Action<RetrieveData> _OnRetrieveStart;
         static Action<string> _OnLoadState;
         static Action<bool> _OnSaveStateResults;
 
         static Dictionary<string, string> _GameLanguage;
         static IResultable _SessionResults;
+        static ISessionStartData _SessionStartData;
 
-        public static void InitAssessment (Action<AssessmentData> onAssessmentData)
+        /// <summary>
+        /// Initialize ASSESS game type if unity client can assess Typing Speed and the Initial Fact Assessment.
+        /// <para>
+        /// Fluency Player will send the proper data to client based on the user's current session.
+        /// </para>
+        /// <para>
+        /// <strong>NOTE:</strong> Only one game type will be act per client load.
+        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// </para>
+        /// </summary>
+        /// <param name="onAssessStart"></param>
+        public static void InitAssess (Action<AssessData> onAssessStart)
         {
-            if (onAssessmentData is null)
+            if (onAssessStart is null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onAssessmentData) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onAssessStart) + " callback must be set.");
                 return;
             }
 
             CreateSDK();
-            _OnAssessmentData = onAssessmentData;
-            _FluencyClientInfo._gameType.value |= GameType.ASSESSMENT;
+            _OnAssessStart = onAssessStart;
+            _FluencyClientInfo._gameType.value |= GameType.ASSESS;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
-        public static void InitPractice (Action<PracticeData> onPracticeData)
+        /// <summary>
+        /// Initialize INSTRUCT game type if unity client can assess Activate (conceptual instruction), Recall (cover-copy-compare), and Practice (timed fact practice).
+        /// <para>
+        /// Fluency Player will send the proper data to client based on the user's current session.
+        /// </para>
+        /// <para>
+        /// <strong>NOTE:</strong> Only one game type will be act per client load.
+        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// </para>
+        /// </summary>
+        /// <param name="onInstructStart"></param>
+        public static void InitInstruct (Action<InstructData> onInstructStart)
         {
-            if (onPracticeData is null)
+            if (onInstructStart is null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onPracticeData) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onInstructStart) + " callback must be set.");
                 return;
             }
 
             CreateSDK();
-            _OnPracticeData = onPracticeData;
-            _FluencyClientInfo._gameType.value |= GameType.PRACTICE;
+            _OnInstructStart = onInstructStart;
+            _FluencyClientInfo._gameType.value |= GameType.INSTRUCT;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
-        public static void InitPlay (Action<PlayData> onPlayData)
+        /// <summary>
+        /// Initialize RETRIEVE game type if unity client can assess Distracted Play Fact Practice.
+        /// <para>
+        /// Fluency Player will send the proper data to client based on the user's current session.
+        /// </para>
+        /// <para>
+        /// <strong>NOTE:</strong> Only one game type will be act per client load.
+        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// </para>
+        /// </summary>
+        /// <param name="onRetrieveStart"></param>
+        public static void InitRetrieve (Action<RetrieveData> onRetrieveStart)
         {
-            if (onPlayData is null)
+            if (onRetrieveStart is null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onPlayData) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onRetrieveStart) + " callback must be set.");
                 return;
             }
 
             CreateSDK();
-            _OnPlayData = onPlayData;
-            _FluencyClientInfo._gameType.value |= GameType.PLAY;
+            _OnRetrieveStart = onRetrieveStart;
+            _FluencyClientInfo._gameType.value |= GameType.RETRIEVE;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
+        /// <summary>
+        /// Inform the Fluency Player that the client has initialized all game types it supports and is ready to start the session.
+        /// </summary>
+        /// <param name="options"></param>
         public static void GameIsReady (GameOptions options = null)
         {
             if (_Instance is null)
@@ -161,6 +200,23 @@ namespace LoL.Fluency
             gameIsReady(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version, sdkOptionsJson);
         }
 
+        public static TData GetStartData<TData> () where TData : class, ISessionStartData
+        {
+            if (_Instance is null)
+            {
+                Debug.LogError("[LoLFluencySDK] Trying to get start data before GameIsReady.");
+                return null;
+            }
+
+            if (_SessionStartData is TData startData)
+            {
+                return startData;
+            }
+
+            Debug.LogError("[LoLFluencySDK] Trying to get invalid start data for current session game type: " + _FluencyClientInfo.playerGameType.ToString());
+            return null;
+        }
+
         static void PostWindowMessage (string msg, string json)
         {
             Action<string, string> postWindowMessage;
@@ -172,6 +228,12 @@ namespace LoL.Fluency
             postWindowMessage(msg, json);
         }
 
+        /// <summary>
+        /// Send session results to the Fluency Player.
+        /// <para>
+        /// For game type RETRIEVE, results are also sent on an interval.
+        /// </para>
+        /// </summary>
         public static void SendResults ()
         {
             if (_SessionResults is null)
@@ -189,6 +251,16 @@ namespace LoL.Fluency
             PostWindowMessage("results", json);
         }
 
+        /// <summary>
+        /// Add an answer result to the session.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="operation"></param>
+        /// <param name="answer"></param>
+        /// <param name="startTime"></param>
+        /// <param name="latencyMS"></param>
+        /// <returns></returns>
         public static bool AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMS)
         {
             if (_SessionResults is null)
@@ -201,6 +273,13 @@ namespace LoL.Fluency
             return true;
         }
 
+        /// <summary>
+        /// Get localized text for a language key.
+        /// Use default if not found or not initialized by the Fluency Player.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public static string GetLanguageText (string key, string defaultValue = null)
         {
             if (_Instance is null || _GameLanguage is null)
@@ -314,7 +393,7 @@ namespace LoL.Fluency
         private IEnumerator _SendResultOnInterval ()
         {
             // Auto send results on play game type only.
-            if (_FluencyClientInfo.playerGameType != GameType.PLAY)
+            if (_FluencyClientInfo.playerGameType != GameType.RETRIEVE)
                 yield break;
 
             while (true)
@@ -415,9 +494,9 @@ namespace LoL.Fluency
         {
             if (string.IsNullOrEmpty(json) || !json.StartsWith("{"))
             {
-                _OnAssessmentData?.Invoke(null);
-                _OnPracticeData?.Invoke(null);
-                _OnPlayData?.Invoke(null);
+                _OnAssessStart?.Invoke(null);
+                _OnInstructStart?.Invoke(null);
+                _OnRetrieveStart?.Invoke(null);
                 return;
             }
 
@@ -429,12 +508,12 @@ namespace LoL.Fluency
                 error += "\nData version: " + expectedClientInfo.version;
                 error += "\nRequested game type: " + expectedClientInfo.GameType.ToString();
                 error += "\nClient supported game types:";
-                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ASSESSMENT))
-                    error += " " + GameType.ASSESSMENT.ToString();
-                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.PRACTICE))
-                    error += " " + GameType.PRACTICE.ToString();
-                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.PLAY))
-                    error += " " + GameType.PLAY.ToString();
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ASSESS))
+                    error += " " + GameType.ASSESS.ToString();
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.INSTRUCT))
+                    error += " " + GameType.INSTRUCT.ToString();
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.RETRIEVE))
+                    error += " " + GameType.RETRIEVE.ToString();
                 Debug.LogError(error);
                 return;
             }
@@ -443,20 +522,23 @@ namespace LoL.Fluency
             _FluencyClientInfo.playerGameType = expectedClientInfo.GameType;
             switch (expectedClientInfo.GameType)
             {
-                case GameType.ASSESSMENT:
-                    _SessionResults = new AssessmentResult();
-                    var assessmentData = JsonUtility.FromJson<AssessmentData>(json);
-                    _OnAssessmentData(assessmentData);
+                case GameType.ASSESS:
+                    _SessionResults = new AssessResult();
+                    var assessData = JsonUtility.FromJson<AssessData>(json);
+                    _SessionStartData = assessData;
+                    _OnAssessStart(assessData);
                     break;
-                case GameType.PRACTICE:
-                    _SessionResults = new PracticeResult();
-                    var practiceData = JsonUtility.FromJson<PracticeData>(json);
-                    _OnPracticeData(practiceData);
+                case GameType.INSTRUCT:
+                    _SessionResults = new InstructResult();
+                    var instructData = JsonUtility.FromJson<InstructData>(json);
+                    _SessionStartData = instructData;
+                    _OnInstructStart(instructData);
                     break;
-                case GameType.PLAY:
-                    _SessionResults = new PlayResult();
-                    var playData = JsonUtility.FromJson<PlayData>(json);
-                    _OnPlayData(playData);
+                case GameType.RETRIEVE:
+                    _SessionResults = new RetrieveResult();
+                    var retrieveData = JsonUtility.FromJson<RetrieveData>(json);
+                    _SessionStartData = retrieveData;
+                    _OnRetrieveStart(retrieveData);
 
                     // Invoke SendResults on interval.
                     _Instance.StartCoroutine(_Instance._SendResultOnInterval());
@@ -497,9 +579,9 @@ namespace LoL.Fluency
     internal enum GameType
     {
         NONE = 0,
-        ASSESSMENT = 1 << 0,
-        PRACTICE = 1 << 1,
-        PLAY = 1 << 2,
+        ASSESS = 1 << 0,
+        INSTRUCT = 1 << 1,
+        RETRIEVE = 1 << 2,
     }
 
     internal struct UnityStringEnum<TEnum> where TEnum : struct
@@ -638,14 +720,16 @@ namespace LoL.Fluency
         TIMES_ELEVEN,
     }
 
+    public interface ISessionStartData { }
+
     [Serializable]
-    public class AssessmentData
+    public class AssessData : ISessionStartData
     {
         public FluencyFact[] facts;
     }
 
     [Serializable]
-    public class PracticeData
+    public class InstructData : ISessionStartData
     {
         public string concept;
         public FluencyFact[] targetFacts;
@@ -662,7 +746,7 @@ namespace LoL.Fluency
     }
 
     [Serializable]
-    public class PlayData
+    public class RetrieveData : ISessionStartData
     {
         public FluencyFact[] targetFacts;
         public FluencyFact[] facts;
@@ -709,19 +793,19 @@ namespace LoL.Fluency
     }
 
     [Serializable]
-    internal class AssessmentResult : ResultBase
+    internal class AssessResult : ResultBase
     {
 
     }
 
     [Serializable]
-    internal class PracticeResult : ResultBase
+    internal class InstructResult : ResultBase
     {
 
     }
 
     [Serializable]
-    internal class PlayResult : ResultBase
+    internal class RetrieveResult : ResultBase
     {
 
     }

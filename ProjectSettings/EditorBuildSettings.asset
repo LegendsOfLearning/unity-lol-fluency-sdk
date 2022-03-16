@@ -9,12 +9,12 @@ EditorBuildSettings:
     path: Assets/LoLFluency/Scenes/InitScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/LoLFluency/Scenes/AssessmentScene.unity
+    path: Assets/LoLFluency/Scenes/AssessScene.unity
     guid: 868283179864a4918a530dca20f6a3a2
   - enabled: 1
-    path: Assets/LoLFluency/Scenes/PracticeScene.unity
+    path: Assets/LoLFluency/Scenes/InstructScene.unity
     guid: b35c5bc1886cc4142a70350778a5e05b
   - enabled: 1
-    path: Assets/LoLFluency/Scenes/PlayScene.unity
+    path: Assets/LoLFluency/Scenes/RetrieveScene.unity
     guid: 3cf3f4dd73f404c1581466f6bd2de9f5
   m_configObjects: {}

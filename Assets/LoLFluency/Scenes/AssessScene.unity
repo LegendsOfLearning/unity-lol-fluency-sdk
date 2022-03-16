@@ -272,21 +272,46 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1828673239
+--- !u!1 &1714225407 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9210755554748543645, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
+  m_PrefabInstance: {fileID: 9210755554309517922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1714225408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714225407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 516083ba119e442dba5bba946890d8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  title: {fileID: 9210755554309517926}
+  text: {fileID: 9210755554309517925}
+  send: {fileID: 1525307633699238041}
+  save: {fileID: 9210755554309517924}
+  load: {fileID: 9210755554309517923}
+--- !u!114 &1525307633699238041 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7708427902618338043, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
+  m_PrefabInstance: {fileID: 9210755554309517922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &9210755554309517922
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2557510101258870211, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-      propertyPath: m_Text
-      value: Add Result
-      objectReference: {fileID: 0}
-    - target: {fileID: 4934202356816523042, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-      propertyPath: m_Name
-      value: AddButton
-      objectReference: {fileID: 0}
     - target: {fileID: 9210755554748543645, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -377,19 +402,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9210755555322757576, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
       propertyPath: m_Text
-      value: IN PLAY
+      value: IN ASSESS
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
---- !u!1 &1828673240 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9210755554748543645, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1828673241 stripped
+--- !u!114 &9210755554309517923 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8439702746928022900, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
+  m_PrefabInstance: {fileID: 9210755554309517922}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -397,10 +417,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1828673242 stripped
+--- !u!114 &9210755554309517924 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2188282912217028967, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
+  m_PrefabInstance: {fileID: 9210755554309517922}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -408,21 +428,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1828673243 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7708427902618338043, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1828673244 stripped
+--- !u!114 &9210755554309517925 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9210755554101916012, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
+  m_PrefabInstance: {fileID: 9210755554309517922}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -430,27 +439,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1828673245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828673240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d562dd89af197441a876fe36a00505f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  title: {fileID: 1828673246}
-  text: {fileID: 1828673244}
-  send: {fileID: 1828673243}
-  save: {fileID: 1828673242}
-  load: {fileID: 1828673241}
---- !u!114 &1828673246 stripped
+--- !u!114 &9210755554309517926 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9210755555322757576, guid: 062b8fcfd6bf14343af78bd39d0d3dd5, type: 3}
-  m_PrefabInstance: {fileID: 1828673239}
+  m_PrefabInstance: {fileID: 9210755554309517922}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1

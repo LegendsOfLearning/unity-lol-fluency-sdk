@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SomeDev.Test
 {
-    public class PracticeManager : MonoBehaviour
+    public class InstructManager : MonoBehaviour
     {
         [SerializeField] Text title;
         [SerializeField] Text text;
@@ -14,17 +14,17 @@ namespace SomeDev.Test
 
         void Start ()
         {
-            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inPractice", "IN PRACTICE");
-            var value = FluencyGameInit.PracticeStartData.concept.ToString();
+            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inInstruct", "IN INSTRUCT");
+            var value = FluencyGameInit.InstructStartData.concept.ToString();
             value += "\n\nFACTS";
-            foreach (var fact in FluencyGameInit.PracticeStartData.facts)
+            foreach (var fact in FluencyGameInit.InstructStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            if (!(FluencyGameInit.PracticeStartData.targetFacts is null))
+            if (!(FluencyGameInit.InstructStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+                foreach (var fact in FluencyGameInit.InstructStartData.targetFacts)
                 {
                     value += $"\n{fact.a} {fact.op} {fact.b}";
                 }
@@ -38,14 +38,14 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.PracticeStartData.facts)
+            foreach (var fact in FluencyGameInit.InstructStartData.facts)
             {
                 LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
 
-            if (!(FluencyGameInit.PracticeStartData.targetFacts is null))
+            if (!(FluencyGameInit.InstructStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+                foreach (var fact in FluencyGameInit.InstructStartData.targetFacts)
                 {
                     LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
                 }
