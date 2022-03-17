@@ -14,36 +14,21 @@ var LoLFluencyPlugin = {
 
         console.log('GameIsReady() from JS');
         console.log('LoL fluency UNITY SDK version: ' + sdkVersion);
-        console.log('Sending data to GameObject' + targetGameObject);
+        console.log('Sending data to GameObject: ' + targetGameObject);
         console.log('SDK Options', sdkOptions);
 
         window.addEventListener('message', function(msg) {
             console.log('[PARENT => UNITY]', msg);
 
-            var payload = undefined;
-
             if(sdkOptions.supportedReceiverKeys.includes(msg.data.messageName)) {
-                payload = JSON.stringify({key: msg.data.messageName, value: msg.data.payload});
-            } else {
-                console.warn('Unhandled message: ', msg);
-                // If we are the parent, we're running the fluency game without a player.
-                // Return null payload data.
-                switch(msg.data.messageName) {
-                    case 'init':
-                        payload = JSON.stringify({key: 'start'});
-                        break;
-                    case 'loadState':
-                        payload = JSON.stringify({key: 'loadState'});
-                        break;
-                }
-            }
-
-            if(payload !== undefined) {
+                var payload = JSON.stringify({key: msg.data.messageName, value: msg.data.payload});
                 SendMessage(
                     targetGameObject,
                     callbackFunction,
                     payload
                 );
+            } else {
+                console.warn('Unhandled message: ', msg);
             }
         });
 
@@ -57,6 +42,16 @@ var LoLFluencyPlugin = {
                 sdkOptions: sdkOptions
             }),
         }, '*');
+
+        // If we are the parent, we're running the fluency game without a player.
+        // Return null payload data to use embedded data in client for testing / demo.
+        if(parent == self) {
+            SendMessage(
+                targetGameObject,
+                callbackFunction,
+                JSON.stringify({key: 'start'})
+            );
+        }
     },
 
     _PostWindowMessage: function(messageNamePtr, jsonPayloadPtr) {

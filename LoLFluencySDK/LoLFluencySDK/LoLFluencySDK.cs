@@ -35,29 +35,20 @@ namespace LoL.Fluency
 
             json = JsonUtility.ToJson(new KeyValueData { key = "start", value = json });
             _Instance.ReceiveData(json);
+
+            SendLocalLanguageJson();
         }
 
         static void _EditorPostWindowMessage (string msg, string payload)
         {
             Debug.Log("Post window message: " + msg + " : " + payload);
-            string json = "{}";
-            switch (msg.ToLower())
+            string json;
+            switch (msg)
             {
-                case "loadstate":
-                    json = PlayerPrefs.GetString(_PlayerPrefsKey, json);
+                case "loadState":
+                    json = PlayerPrefs.GetString(_PlayerPrefsKey);
                     break;
-                case "language":
-                    var entries = new KeyValueData[]
-                        {
-                            new KeyValueData { key = "test", value = "TESTING LANGUAGE" },
-                            new KeyValueData { key = "title", value = "LoL Fluency SDK" },
-                            new KeyValueData { key = "start", value = "Start Game" },
-                            new KeyValueData { key = "highscore", value = "High Score" },
-                        };
-
-                    json = JsonUtility.ToJson(new Language { entries = entries });
-                    break;
-                case "savestate":
+                case "saveState":
                     msg = "saveStateResult";
                     json = JsonUtility.ToJson(new SaveStateResults { success = true });
                     break;
@@ -67,6 +58,16 @@ namespace LoL.Fluency
 
             json = JsonUtility.ToJson(new KeyValueData { key = msg, value = json });
             _Instance.ReceiveData(json);
+        }
+
+        static void SendLocalLanguageJson ()
+        {
+            var streamingLangPath = System.IO.Path.Combine(Application.streamingAssetsPath, "language.json");
+            if (System.IO.File.Exists(streamingLangPath))
+            {
+                var json = System.IO.File.ReadAllText(streamingLangPath);
+                _Instance.ReceiveData(JsonUtility.ToJson(new KeyValueData { key = "language", value = json }));
+            }
         }
 
         static LoLFluencySDK _Instance;
@@ -93,6 +94,7 @@ namespace LoL.Fluency
         static Dictionary<string, string> _GameLanguage;
         static IResultable _SessionResults;
         static ISessionStartData _SessionStartData;
+        const string _EmptyJSON = "{}";
 
         /// <summary>
         /// Initialize ASSESS game type if unity client can assess Typing Speed and the Initial Fact Assessment.
@@ -303,7 +305,7 @@ namespace LoL.Fluency
 
         public static void CancelSpeakText ()
         {
-            PostWindowMessage("speakTextCancel", "{}");
+            PostWindowMessage("speakTextCancel", _EmptyJSON);
         }
 
         public static void LoadGameState<T> (Action<T> onLoaded) where T : class
@@ -321,14 +323,14 @@ namespace LoL.Fluency
             }
             _Instance._timerRoutine = _Instance.StartCoroutine(_Instance._LoadDataTimeOuter());
 
-            PostWindowMessage("loadState", "{}");
+            PostWindowMessage("loadState", _EmptyJSON);
         }
 
         static void SetOnStateLoadedCallback<T> (Action<T> onLoaded) where T : class
         {
             _OnLoadState = json =>
             {
-                if (string.IsNullOrEmpty(json) || !json.StartsWith("{"))
+                if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
                 {
                     // Try for local state. Don't save remote if found.
                     var localState = GetLocal();
@@ -463,22 +465,23 @@ namespace LoL.Fluency
         static Dictionary<string, Action<string>> _Receivers = new Dictionary<string, Action<string>>
         {
             ["start"] = ReceiveStartData,
-            ["loadstate"] = ReceiveLoadStateData,
+            ["loadState"] = ReceiveLoadStateData,
             ["language"] = ReceiveLanguageJson,
-            ["savestateresult"] = ReceiveSaveStateResult,
+            ["saveStateResult"] = ReceiveSaveStateResult,
         };
 
         // called from jslib.
         public void ReceiveData (string json)
         {
-            var msgData = JsonUtility.FromJson<KeyValueData>(json);
-            if (msgData == null)
+            if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
             {
                 Debug.LogError("[LoLFluencySDK] Received incorrect json from fluency player: " + json);
                 return;
             }
 
-            var key = msgData.key.ToLower();
+            var msgData = JsonUtility.FromJson<KeyValueData>(json);
+            var key = msgData.key;
+
             if (!_Receivers.TryGetValue(key, out var receiver))
             {
                 Debug.LogWarning("[LoLFluencySDK] Receiver not implemented in sdk: " + key);
@@ -492,7 +495,7 @@ namespace LoL.Fluency
 
         static void ReceiveStartData (string json)
         {
-            if (string.IsNullOrEmpty(json) || !json.StartsWith("{"))
+            if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
             {
                 _OnAssessStart?.Invoke(null);
                 _OnInstructStart?.Invoke(null);

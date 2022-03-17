@@ -18,6 +18,9 @@ namespace SomeDev.Test
         public static InstructData InstructStartData { get; private set; }
         public static RetrieveData RetrieveStartData { get; private set; }
 
+        [SerializeField] UnityEngine.UI.Text text;
+        const string _NoDataMsg = "No {0} provided!\nIs the client hosted by an LoL Fluency Player?";
+
         // Start is called before the first frame update
         void Start ()
         {
@@ -39,18 +42,36 @@ namespace SomeDev.Test
 
         void OnAssessStart (AssessData assessData)
         {
+            if (assessData == null)
+            {
+                text.text = string.Format(_NoDataMsg, nameof(AssessStartData));
+                return;
+            }
+
             AssessStartData = assessData;
             SceneManager.LoadSceneAsync("AssessScene");
         }
 
         void OnInstructStart (InstructData instructData)
         {
+            if (instructData == null)
+            {
+                text.text = string.Format(_NoDataMsg, nameof(InstructStartData));
+                return;
+            }
+
             InstructStartData = instructData;
             SceneManager.LoadSceneAsync("InstructScene");
         }
 
         void OnRetrieveStart (RetrieveData retrieveData)
         {
+            if (retrieveData == null)
+            {
+                text.text = string.Format(_NoDataMsg, nameof(RetrieveStartData));
+                return;
+            }
+
             RetrieveStartData = retrieveData;
             SceneManager.LoadSceneAsync("RetrieveScene");
         }
