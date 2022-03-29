@@ -65,7 +65,7 @@ namespace SomeDev.Test
                 return;
             }
             _gameState = state;
-            Debug.Log("Received load state: " + JsonUtility.ToJson(state));
+            Debug.Log("Received Assess load state: " + JsonUtility.ToJson(state));
         }
     }
 }

@@ -16,13 +16,13 @@ namespace LoL.Fluency
         static void _EditorGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
             string json;
-            if (_FluencyClientInfo.GameType.HasFlag(GameType.RETRIEVE))
+            if (_FluencyClientInfo.GameType.HasFlag(GameType.PRACTICE))
             {
-                json = @"{""gameType"":""RETRIEVE"",""version"":""1.0.0"",""facts"":[{""a"":4,""b"":2,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                json = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":4,""b"":2,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
             }
-            else if (_FluencyClientInfo.GameType.HasFlag(GameType.INSTRUCT))
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.ESTABLISH))
             {
-                json = @"{""gameType"":""INSTRUCT"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                json = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
             }
             else if (_FluencyClientInfo.GameType.HasFlag(GameType.ASSESS))
             {
@@ -86,8 +86,8 @@ namespace LoL.Fluency
         static FluencyClientInfo _FluencyClientInfo;
 
         static Action<AssessData> _OnAssessStart;
-        static Action<InstructData> _OnInstructStart;
-        static Action<RetrieveData> _OnRetrieveStart;
+        static Action<EstablishData> _OnEstablishStart;
+        static Action<PracticeData> _OnPracticeStart;
         static Action<string> _OnLoadState;
         static Action<bool> _OnSaveStateResults;
 
@@ -103,7 +103,7 @@ namespace LoL.Fluency
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
         /// <param name="onAssessStart"></param>
@@ -122,52 +122,52 @@ namespace LoL.Fluency
         }
 
         /// <summary>
-        /// Initialize INSTRUCT game type if unity client can assess Activate (conceptual instruction), Recall (cover-copy-compare), and Practice (timed fact practice).
+        /// Initialize ESTABLISH game type if unity client can assess Activate (conceptual instruction), Recall (cover-copy-compare), and Practice (timed fact practice).
         /// <para>
         /// Fluency Player will send the proper data to client based on the user's current session.
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
-        /// <param name="onInstructStart"></param>
-        public static void InitInstruct (Action<InstructData> onInstructStart)
+        /// <param name="onEstablishStart"></param>
+        public static void InitEstablish (Action<EstablishData> onEstablishStart)
         {
-            if (onInstructStart is null)
+            if (onEstablishStart is null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onInstructStart) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onEstablishStart) + " callback must be set.");
                 return;
             }
 
             CreateSDK();
-            _OnInstructStart = onInstructStart;
-            _FluencyClientInfo._gameType.value |= GameType.INSTRUCT;
+            _OnEstablishStart = onEstablishStart;
+            _FluencyClientInfo._gameType.value |= GameType.ESTABLISH;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
         /// <summary>
-        /// Initialize RETRIEVE game type if unity client can assess Distracted Play Fact Practice.
+        /// Initialize PRACTICE game type if unity client can assess Distracted Play Fact Practice.
         /// <para>
         /// Fluency Player will send the proper data to client based on the user's current session.
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, INSTRUCT, or RETRIEVE on load.
+        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
-        /// <param name="onRetrieveStart"></param>
-        public static void InitRetrieve (Action<RetrieveData> onRetrieveStart)
+        /// <param name="onPracticeStart"></param>
+        public static void InitPractice (Action<PracticeData> onPracticeStart)
         {
-            if (onRetrieveStart is null)
+            if (onPracticeStart is null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onRetrieveStart) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onPracticeStart) + " callback must be set.");
                 return;
             }
 
             CreateSDK();
-            _OnRetrieveStart = onRetrieveStart;
-            _FluencyClientInfo._gameType.value |= GameType.RETRIEVE;
+            _OnPracticeStart = onPracticeStart;
+            _FluencyClientInfo._gameType.value |= GameType.PRACTICE;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
@@ -233,7 +233,7 @@ namespace LoL.Fluency
         /// <summary>
         /// Send session results to the Fluency Player.
         /// <para>
-        /// For game type RETRIEVE, results are also sent on an interval.
+        /// For game type PRACTICE, results are also sent on an interval.
         /// </para>
         /// </summary>
         public static void SendResults ()
@@ -395,7 +395,7 @@ namespace LoL.Fluency
         private IEnumerator _SendResultOnInterval ()
         {
             // Auto send results on play game type only.
-            if (_FluencyClientInfo.playerGameType != GameType.RETRIEVE)
+            if (_FluencyClientInfo.playerGameType != GameType.PRACTICE)
                 yield break;
 
             while (true)
@@ -498,8 +498,8 @@ namespace LoL.Fluency
             if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
             {
                 _OnAssessStart?.Invoke(null);
-                _OnInstructStart?.Invoke(null);
-                _OnRetrieveStart?.Invoke(null);
+                _OnEstablishStart?.Invoke(null);
+                _OnPracticeStart?.Invoke(null);
                 return;
             }
 
@@ -513,10 +513,10 @@ namespace LoL.Fluency
                 error += "\nClient supported game types:";
                 if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ASSESS))
                     error += " " + GameType.ASSESS.ToString();
-                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.INSTRUCT))
-                    error += " " + GameType.INSTRUCT.ToString();
-                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.RETRIEVE))
-                    error += " " + GameType.RETRIEVE.ToString();
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ESTABLISH))
+                    error += " " + GameType.ESTABLISH.ToString();
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.PRACTICE))
+                    error += " " + GameType.PRACTICE.ToString();
                 Debug.LogError(error);
                 return;
             }
@@ -531,17 +531,17 @@ namespace LoL.Fluency
                     _SessionStartData = assessData;
                     _OnAssessStart(assessData);
                     break;
-                case GameType.INSTRUCT:
-                    _SessionResults = new InstructResult();
-                    var instructData = JsonUtility.FromJson<InstructData>(json);
-                    _SessionStartData = instructData;
-                    _OnInstructStart(instructData);
+                case GameType.ESTABLISH:
+                    _SessionResults = new EstablishResult();
+                    var EstablishData = JsonUtility.FromJson<EstablishData>(json);
+                    _SessionStartData = EstablishData;
+                    _OnEstablishStart(EstablishData);
                     break;
-                case GameType.RETRIEVE:
-                    _SessionResults = new RetrieveResult();
-                    var retrieveData = JsonUtility.FromJson<RetrieveData>(json);
-                    _SessionStartData = retrieveData;
-                    _OnRetrieveStart(retrieveData);
+                case GameType.PRACTICE:
+                    _SessionResults = new PracticeResult();
+                    var practiceData = JsonUtility.FromJson<PracticeData>(json);
+                    _SessionStartData = practiceData;
+                    _OnPracticeStart(practiceData);
 
                     // Invoke SendResults on interval.
                     _Instance.StartCoroutine(_Instance._SendResultOnInterval());
@@ -583,8 +583,8 @@ namespace LoL.Fluency
     {
         NONE = 0,
         ASSESS = 1 << 0,
-        INSTRUCT = 1 << 1,
-        RETRIEVE = 1 << 2,
+        ESTABLISH = 1 << 1,
+        PRACTICE = 1 << 2,
     }
 
     internal struct UnityStringEnum<TEnum> where TEnum : struct
@@ -732,7 +732,7 @@ namespace LoL.Fluency
     }
 
     [Serializable]
-    public class InstructData : ISessionStartData
+    public class EstablishData : ISessionStartData
     {
         public string concept;
         public FluencyFact[] targetFacts;
@@ -749,7 +749,7 @@ namespace LoL.Fluency
     }
 
     [Serializable]
-    public class RetrieveData : ISessionStartData
+    public class PracticeData : ISessionStartData
     {
         public FluencyFact[] targetFacts;
         public FluencyFact[] facts;
@@ -802,13 +802,13 @@ namespace LoL.Fluency
     }
 
     [Serializable]
-    internal class InstructResult : ResultBase
+    internal class EstablishResult : ResultBase
     {
 
     }
 
     [Serializable]
-    internal class RetrieveResult : ResultBase
+    internal class PracticeResult : ResultBase
     {
 
     }

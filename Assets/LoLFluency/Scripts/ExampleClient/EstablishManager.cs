@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SomeDev.Test
 {
-    public class InstructManager : MonoBehaviour
+    public class EstablishManager : MonoBehaviour
     {
         [SerializeField] Text title;
         [SerializeField] Text text;
@@ -14,17 +14,17 @@ namespace SomeDev.Test
 
         void Start ()
         {
-            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inInstruct", "IN INSTRUCT");
-            var value = FluencyGameInit.InstructStartData.concept.ToString();
+            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inEstablish", "IN ESTABLISH");
+            var value = FluencyGameInit.EstablishStartData.concept.ToString();
             value += "\n\nFACTS";
-            foreach (var fact in FluencyGameInit.InstructStartData.facts)
+            foreach (var fact in FluencyGameInit.EstablishStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            if (!(FluencyGameInit.InstructStartData.targetFacts is null))
+            if (!(FluencyGameInit.EstablishStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.InstructStartData.targetFacts)
+                foreach (var fact in FluencyGameInit.EstablishStartData.targetFacts)
                 {
                     value += $"\n{fact.a} {fact.op} {fact.b}";
                 }
@@ -38,14 +38,14 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.InstructStartData.facts)
+            foreach (var fact in FluencyGameInit.EstablishStartData.facts)
             {
                 LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
 
-            if (!(FluencyGameInit.InstructStartData.targetFacts is null))
+            if (!(FluencyGameInit.EstablishStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.InstructStartData.targetFacts)
+                foreach (var fact in FluencyGameInit.EstablishStartData.targetFacts)
                 {
                     LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
                 }
@@ -83,7 +83,7 @@ namespace SomeDev.Test
                 return;
             }
             _gameState = state;
-            Debug.Log("Received load state: " + JsonUtility.ToJson(state));
+            Debug.Log("Received Establish load state: " + JsonUtility.ToJson(state));
         }
     }
 }

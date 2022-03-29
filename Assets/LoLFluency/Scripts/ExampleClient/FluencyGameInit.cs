@@ -15,8 +15,8 @@ namespace SomeDev.Test
     public class FluencyGameInit : MonoBehaviour
     {
         public static AssessData AssessStartData { get; private set; }
-        public static InstructData InstructStartData { get; private set; }
-        public static RetrieveData RetrieveStartData { get; private set; }
+        public static EstablishData EstablishStartData { get; private set; }
+        public static PracticeData PracticeStartData { get; private set; }
 
         [SerializeField] UnityEngine.UI.Text text;
         const string _NoDataMsg = "No {0} provided!\nIs the client hosted by an LoL Fluency Player?";
@@ -26,17 +26,17 @@ namespace SomeDev.Test
         {
             // Register for all game types your build can support.
             LoLFluencySDK.InitAssess(OnAssessStart);
-            LoLFluencySDK.InitInstruct(OnInstructStart);
-            LoLFluencySDK.InitRetrieve(OnRetrieveStart);
+            LoLFluencySDK.InitEstablish(OnEstablishStart);
+            LoLFluencySDK.InitPractice(OnPracticeData);
 
             // Let the sdk know to alert the Fluency Player that the client is ready.
             LoLFluencySDK.GameIsReady();
 
             // If you don't use a static variable for your start data, you can get the starting data from the sdk.
-            // var retrieveStartData = LoLFluencySDK.GetStartData<RetrieveData>();
+            // var practiceStartData = LoLFluencySDK.GetStartData<PracticeData>();
 
             // NOTE: if you try to get starting data for a game type that isn't valid for that session, you'll get null.
-            // i.e. Fluency Player starts a game type: INSTRUCT session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
+            // i.e. Fluency Player starts a game type: ESTABLISH session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
             // So make sure the game sessions are separated in your unity client if your build can support multiple game types.
         }
 
@@ -52,28 +52,28 @@ namespace SomeDev.Test
             SceneManager.LoadSceneAsync("AssessScene");
         }
 
-        void OnInstructStart (InstructData instructData)
+        void OnEstablishStart (EstablishData establishData)
         {
-            if (instructData == null)
+            if (establishData == null)
             {
-                text.text = string.Format(_NoDataMsg, nameof(InstructStartData));
+                text.text = string.Format(_NoDataMsg, nameof(EstablishStartData));
                 return;
             }
 
-            InstructStartData = instructData;
-            SceneManager.LoadSceneAsync("InstructScene");
+            EstablishStartData = establishData;
+            SceneManager.LoadSceneAsync("establishScene");
         }
 
-        void OnRetrieveStart (RetrieveData retrieveData)
+        void OnPracticeData (PracticeData practiceData)
         {
-            if (retrieveData == null)
+            if (practiceData == null)
             {
-                text.text = string.Format(_NoDataMsg, nameof(RetrieveStartData));
+                text.text = string.Format(_NoDataMsg, nameof(PracticeStartData));
                 return;
             }
 
-            RetrieveStartData = retrieveData;
-            SceneManager.LoadSceneAsync("RetrieveScene");
+            PracticeStartData = practiceData;
+            SceneManager.LoadSceneAsync("PracticeScene");
         }
     }
 }

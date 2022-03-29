@@ -1,7 +1,7 @@
 ﻿{
     "entries":[
         { "key": "inAssess", "value": "IN ASSESS" },
-        { "key": "inInstruct", "value": "IN INSTRUCT" },
-        { "key": "inRetrieve", "value": "IN RETRIEVE" }
+        { "key": "inEstablish", "value": "IN ESTABLISH" },
+        { "key": "inPractice", "value": "IN PRACTICE" }
     ]
 }

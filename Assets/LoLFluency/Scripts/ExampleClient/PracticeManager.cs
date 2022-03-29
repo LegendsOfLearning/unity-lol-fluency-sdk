@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace SomeDev.Test
 {
-    public class RetrieveManager : MonoBehaviour
+    public class PracticeManager : MonoBehaviour
     {
         [SerializeField] Text title;
         [SerializeField] Text text;
@@ -15,22 +15,22 @@ namespace SomeDev.Test
 
         void Start ()
         {
-            title.text = LoLFluencySDK.GetLanguageText("inRetrieve", "IN RETRIEVE");
+            title.text = LoLFluencySDK.GetLanguageText("inPractice", "IN PRACTICE");
             // If you don't use a static variable, you can get the starting data from the sdk.
             // NOTE: if you try to get starting data for a game type that isn't valid for that session, you'll get null.
             // i.e. Fluency Player starts a game type: INSTRUCT session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
             // So make sure the game sessions are separated in your unity client if your build can handle multiple game types.
-            var retrieveStartData = LoLFluencySDK.GetStartData<RetrieveData>();
+            var practiceStartData = LoLFluencySDK.GetStartData<PracticeData>();
 
             var value = "FACTS";
-            foreach (var fact in retrieveStartData.facts)
+            foreach (var fact in practiceStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            if (!(retrieveStartData.targetFacts is null))
+            if (!(practiceStartData.targetFacts is null))
             {
-                foreach (var fact in retrieveStartData.targetFacts)
+                foreach (var fact in practiceStartData.targetFacts)
                 {
                     value += $"\n{fact.a} {fact.op} {fact.b}";
                 }
@@ -44,18 +44,18 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.RetrieveStartData.facts)
+            foreach (var fact in FluencyGameInit.PracticeStartData.facts)
             {
                 LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
 
-            if (FluencyGameInit.RetrieveStartData.targetFacts is null)
+            if (FluencyGameInit.PracticeStartData.targetFacts is null)
                 return;
-            foreach (var fact in FluencyGameInit.RetrieveStartData.targetFacts)
+            foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
             {
                 LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
-            // Send is sent on an interval for RETRIEVE.
+            // Send is sent on an interval for PRACTICE.
             //LoL.Fluency.LoLFluencySDK.SendResults();
         }
 
@@ -88,7 +88,7 @@ namespace SomeDev.Test
                 return;
             }
             _gameState = state;
-            Debug.Log("Received load state: " + JsonUtility.ToJson(state));
+            Debug.Log("Received Practice load state: " + JsonUtility.ToJson(state));
         }
     }
 }
