@@ -9,7 +9,7 @@ Received game message: init {"gameName":"FluencySDK","sdkVersion":"1.0.0"}
 Sent game message to iframe:
 {
     "messageName": "start",
-    "payload": "{\"facts\":[{\"a\":1,\"b\":2,\"op\":\"SUB\"}],\"gameType\":\"assessment\",\"version\":\"1.0.0\"}"
+    "payload": "{\"facts\":[{\"a\":1,\"b\":2,\"op\":\"SUB\"}],\"gameType\":\"assess\",\"version\":\"1.0.0\"}"
 }
 ```
 
@@ -24,33 +24,35 @@ If the game type coming from the fluency game player is not supported by the cli
 [LoLFluencySDK] Client and data are not compatible
 Client version: 1.0.0
 Data version: 2.0.0
-Requested game type: ASSESSMENT
-Client supported game types: ASSESSMENT PRACTICE PLAY
+Requested game type: ASSESS
+Client supported game types: ASSESSMENT ESTABLISH PRACTICE
 ```
 
 Below is an example of a client that is supporting all 3 game types
 ```
-public static AssessmentData AssessmentStartData { get; private set; }
+public static AssessData AssessStartData { get; private set; }
+public static EstablishData EstablishStartData { get; private set; }
 public static PracticeData PracticeStartData { get; private set; }
-public static PlayData PlayStartData { get; private set; }
-
-public static IResultable AssessmentResults;
-public static IResultable PracticeResults;
-public static IResultable PlayResults;
 
 void Start ()
 {
-    AssessmentResults = LoLFluencySDK.InitAssessment(OnAssessmentData);
-    PracticeResults = LoLFluencySDK.InitPractice(OnPracticeData);
-    PlayResults = LoLFluencySDK.InitPlay(OnPlayData);
+    LoLFluencySDK.InitAssess(OnAssessData);
+    LoLFluencySDK.InitEstablish(OnEstablishData);
+    LoLFluencySDK.InitPractice(OnPracticeData);
 
     LoLFluencySDK.GameIsReady();
 }
 
-void OnAssessmentData (AssessmentData assessmentData)
+void OnAssessData (AssessData assessData)
 {
-    AssessmentStartData = assessmentData;
-    SceneManager.LoadSceneAsync("AssessmentScene");
+    AssessStartData = assessData;
+    SceneManager.LoadSceneAsync("AssessScene");
+}
+
+void OnEstablishData (EstablishDataData establishData)
+{
+    EstablishStartData = establishData;
+    SceneManager.LoadSceneAsync("EstablishScene");
 }
 
 void OnPracticeData (PracticeData practiceData)
@@ -58,32 +60,24 @@ void OnPracticeData (PracticeData practiceData)
     PracticeStartData = practiceData;
     SceneManager.LoadSceneAsync("PracticeScene");
 }
-
-void OnPlayData (PlayData playData)
-{
-    PlayStartData = playData;
-    SceneManager.LoadSceneAsync("PlayScene");
-}
 ```
 
-Below is a client only supporting the `PLAY` game type
+Below is a client only supporting the `PRACTICE` game type
 ```
-public static PlayData PlayStartData { get; private set; }
-
-public static IResultable PlayResults;
+public static PracticeData PracticeStartData { get; private set; }
 
 void Start ()
 {
-    PlayResults = LoLFluencySDK.InitPlay(OnPlayData);
+    LoLFluencySDK.InitPractice(OnPracticeData);
 
     LoLFluencySDK.GameIsReady();
 }
 
-void OnPlayData (PlayData playData)
+void OnPracticeData (PracticeData practiceData)
 {
-    PlayStartData = playData;
+    PracticeStartData = practiceData;
     // Load a scene or use this scene to start the experience.
-    SceneManager.LoadSceneAsync("PlayScene");
+    SceneManager.LoadSceneAsync("PracticeScene");
 }
 ```
 
@@ -92,14 +86,14 @@ These testing urls point to a "wrapper" that mimics the fluency player.
 
 Tests are using query params to mimic the player session data. When the client loads it'll display the data. The `send results` button will log the `trials` array to the console.
 
-Assessment
+Assess
 
-https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/index.html?gameType=assessment&version=1.0.0&data={%22facts%22:[{%22a%22:1,%22b%22:2,%22op%22:%22SUB%22}]}
+https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/v4/index.html?gameType=assess&version=1.0.0&data={%22facts%22:[{%22a%22:3,%22b%22:2,%22op%22:%22SUB%22}]}
+
+Establish
+
+https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/v4/index.html?gameType=establish&version=1.0.0&data={"concept":"MULTIPLICATION","facts":[{"a":3,"b":2,"op":"MUL"}],"targetFacts":[{"a":2,"b":4,"op":"MUL"}]}
 
 Practice
 
-https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/index.html?gameType=practice&version=1.0.0&data={"concept":"MULTIPLICATION","facts":[{"a":1,"b":2,"op":"ADD"}],"target_facts":[{"a":2,"b":4,"op":"MUL"}]}
-
-Play
-
-https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/index.html?gameType=play&version=1.0.0&data={%22facts%22:[{%22a%22:1,%22b%22:2,%22op%22:%22DIV%22}],%22target_facts%22:[{%22a%22:2,%22b%22:4,%22op%22:%22MUL%22}]} (edited) 
+https://legends-of-learning-dev.s3.amazonaws.com/test/LoLFluencySDK/v4/index.html?gameType=practice&version=1.0.0&data={%22facts%22:[{%22a%22:4,%22b%22:2,%22op%22:%22DIV%22}],%22targetFacts%22:[{%22a%22:2,%22b%22:4,%22op%22:%22MUL%22}]}
