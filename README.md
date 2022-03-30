@@ -13,7 +13,7 @@ Sent game message to iframe:
 }
 ```
 
-The SDK can be given to 3rd party or internal devs creating any game type for the fluency session. ( `ASSESSMENT`, `PRACTICE`, `PLAY` )
+The SDK can be given to 3rd party or internal devs creating any game type for the fluency session. ( `ASSESS`, `ESTABLISH`, `PRACTICE` )
 The game created by the dev could implement all of the game types or any subset.
 The data fed from the fluency game player will dictate what type of game the client should show.
 
@@ -25,7 +25,7 @@ If the game type coming from the fluency game player is not supported by the cli
 Client version: 1.0.0
 Data version: 2.0.0
 Requested game type: ASSESS
-Client supported game types: ASSESSMENT ESTABLISH PRACTICE
+Client supported game types: ASSESS ESTABLISH PRACTICE
 ```
 
 Below is an example of a client that is supporting all 3 game types
