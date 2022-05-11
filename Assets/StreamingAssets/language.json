@@ -1,5 +1,6 @@
 ﻿{
     "entries":[
+        { "key": "inTyping", "value": "IN TYPING" },
         { "key": "inAssess", "value": "IN ASSESS" },
         { "key": "inEstablish", "value": "IN ESTABLISH" },
         { "key": "inPractice", "value": "IN PRACTICE" }

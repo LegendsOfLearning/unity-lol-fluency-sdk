@@ -1,3 +1,4 @@
+using LoL.Fluency;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +13,14 @@ namespace SomeDev.Test
         [SerializeField] Button load;
         GameState _gameState;
 
+        AssessData _assessStartData;
+
         void Start ()
         {
-            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inAssess", "IN ASSESS");
+            _assessStartData = LoLFluencySDK.GetStartData<AssessData>();
+            title.text = LoLFluencySDK.GetLanguageText("inAssess", "IN ASSESS");
             var value = "FACTS";
-            foreach (var fact in FluencyGameInit.AssessStartData.facts)
+            foreach (var fact in _assessStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
@@ -29,11 +33,11 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.AssessStartData.facts)
+            foreach (var fact in _assessStartData.facts)
             {
-                LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
+                LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
-            LoL.Fluency.LoLFluencySDK.SendResults();
+            LoLFluencySDK.SendResults();
         }
 
         void Save ()
@@ -44,12 +48,12 @@ namespace SomeDev.Test
                 retry = Random.Range(0, 10),
                 score = Random.Range(0, 2000)
             };
-            LoL.Fluency.LoLFluencySDK.SaveGameState(_gameState, OnSaveResult);
+            LoLFluencySDK.SaveGameState(_gameState, OnSaveResult);
         }
 
         void Load ()
         {
-            LoL.Fluency.LoLFluencySDK.LoadGameState<GameState>(Load);
+            LoLFluencySDK.LoadGameState<GameState>(Load);
         }
 
         void OnSaveResult (bool success)

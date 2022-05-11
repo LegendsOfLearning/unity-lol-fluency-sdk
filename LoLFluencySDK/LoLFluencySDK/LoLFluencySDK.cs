@@ -28,6 +28,10 @@ namespace LoL.Fluency
             {
                 json = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
             }
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.TYPING))
+            {
+                json = @"{""gameType"":""TYPING"",""version"":""1.0.0""}";
+            }
             else
             {
                 json = @"{""gameType"":""TESTING FAIL"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
@@ -73,18 +77,36 @@ namespace LoL.Fluency
         static LoLFluencySDK _Instance;
         static LoLFluencySDK CreateSDK ()
         {
-            if (_Instance is null)
+            if (_Instance == null)
             {
-                _Instance = new GameObject("__" + nameof(LoLFluencySDK) + "__").AddComponent<LoLFluencySDK>();
+                _Instance = new GameObject($"__{nameof(LoLFluencySDK)}__").AddComponent<LoLFluencySDK>();
                 _FluencyClientInfo = new FluencyClientInfo();
-                DontDestroyOnLoad(_Instance);
+                DontDestroyOnLoad(_Instance.gameObject);
             }
 
             return _Instance;
         }
 
+        void OnDestroy ()
+        {
+            _Instance = null;
+            _FluencyClientInfo = null;
+            _OnTypingStart = null;
+            _OnAssessStart = null;
+            _OnEstablishStart = null;
+            _OnPracticeStart = null;
+            _OnLoadState = null;
+            _OnSaveStateResults = null;
+            _GameLanguage = null;
+            _SessionResults = null;
+            _SessionStartData = null;
+            _EmbeddedGameIsReady = null;
+            _EmbeddedPostMessage = null;
+        }
+
         static FluencyClientInfo _FluencyClientInfo;
 
+        static Action<TypingData> _OnTypingStart;
         static Action<AssessData> _OnAssessStart;
         static Action<EstablishData> _OnEstablishStart;
         static Action<PracticeData> _OnPracticeStart;
@@ -96,20 +118,57 @@ namespace LoL.Fluency
         static ISessionStartData _SessionStartData;
         const string _EmptyJSON = "{}";
 
+        static Action<string, string, string, string, string> _EmbeddedGameIsReady;
+        static Action<string, string> _EmbeddedPostMessage;
+
+        public static LoLFluencySDK InitEmbeddedPlayer (
+            Action<string, string, string, string, string> embeddedGameIsReady,
+            Action<string, string> embeddedPostMessage)
+        {
+            _EmbeddedGameIsReady = embeddedGameIsReady;
+            _EmbeddedPostMessage = embeddedPostMessage;
+            return CreateSDK();
+        }
+
         /// <summary>
-        /// Initialize ASSESS game type if unity client can assess Typing Speed and the Initial Fact Assessment.
+        /// Initialize TYPING game type if unity client can assess Typing Speed.
         /// <para>
         /// Fluency Player will send the proper data to client based on the user's current session.
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
+        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
+        /// </para>
+        /// </summary>
+        /// <param name="onAssessStart"></param>
+        public static void InitTyping (Action<TypingData> onTypingStart)
+        {
+            if (onTypingStart == null)
+            {
+                Debug.LogError("[LoLFluencySDK] " + nameof(onTypingStart) + " callback must be set.");
+                return;
+            }
+
+            CreateSDK();
+            _OnTypingStart = onTypingStart;
+            _FluencyClientInfo._gameType.value |= GameType.TYPING;
+            _FluencyClientInfo._gameType.isSet = true;
+        }
+
+        /// <summary>
+        /// Initialize ASSESS game type if unity client can assess the Initial Fact Assessment.
+        /// <para>
+        /// Fluency Player will send the proper data to client based on the user's current session.
+        /// </para>
+        /// <para>
+        /// <strong>NOTE:</strong> Only one game type will be act per client load.
+        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
         /// <param name="onAssessStart"></param>
         public static void InitAssess (Action<AssessData> onAssessStart)
         {
-            if (onAssessStart is null)
+            if (onAssessStart == null)
             {
                 Debug.LogError("[LoLFluencySDK] " + nameof(onAssessStart) + " callback must be set.");
                 return;
@@ -128,13 +187,13 @@ namespace LoL.Fluency
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
+        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
         /// <param name="onEstablishStart"></param>
         public static void InitEstablish (Action<EstablishData> onEstablishStart)
         {
-            if (onEstablishStart is null)
+            if (onEstablishStart == null)
             {
                 Debug.LogError("[LoLFluencySDK] " + nameof(onEstablishStart) + " callback must be set.");
                 return;
@@ -153,13 +212,13 @@ namespace LoL.Fluency
         /// </para>
         /// <para>
         /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in ASSESS, ESTABLISH, or PRACTICE on load.
+        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
         /// </para>
         /// </summary>
         /// <param name="onPracticeStart"></param>
         public static void InitPractice (Action<PracticeData> onPracticeStart)
         {
-            if (onPracticeStart is null)
+            if (onPracticeStart == null)
             {
                 Debug.LogError("[LoLFluencySDK] " + nameof(onPracticeStart) + " callback must be set.");
                 return;
@@ -177,7 +236,7 @@ namespace LoL.Fluency
         /// <param name="options"></param>
         public static void GameIsReady (GameOptions options = null)
         {
-            if (_Instance is null)
+            if (_Instance == null)
             {
                 Debug.LogError("[LoLFluencySDK] Call Init before calling GameIsReady.");
                 return;
@@ -194,7 +253,9 @@ namespace LoL.Fluency
             var sdkOptionsJson = JsonUtility.ToJson(sdkOptions);
 
             Action<string, string, string, string, string> gameIsReady;
-            if (Application.isEditor)
+            if (_EmbeddedGameIsReady != null)
+                gameIsReady = _EmbeddedGameIsReady;
+            else if (Application.isEditor)
                 gameIsReady = _EditorGameIsReady;
             else
                 gameIsReady = _GameIsReady;
@@ -204,7 +265,7 @@ namespace LoL.Fluency
 
         public static TData GetStartData<TData> () where TData : class, ISessionStartData
         {
-            if (_Instance is null)
+            if (_Instance == null)
             {
                 Debug.LogError("[LoLFluencySDK] Trying to get start data before GameIsReady.");
                 return null;
@@ -222,7 +283,9 @@ namespace LoL.Fluency
         static void PostWindowMessage (string msg, string json)
         {
             Action<string, string> postWindowMessage;
-            if (Application.isEditor)
+            if (_EmbeddedPostMessage != null)
+                postWindowMessage = _EmbeddedPostMessage;
+            else if (Application.isEditor)
                 postWindowMessage = _EditorPostWindowMessage;
             else
                 postWindowMessage = _PostWindowMessage;
@@ -238,7 +301,7 @@ namespace LoL.Fluency
         /// </summary>
         public static void SendResults ()
         {
-            if (_SessionResults is null)
+            if (_SessionResults == null)
             {
                 Debug.LogError("[LoLFluencySDK] results not sent. Did you call GameIsReady first?");
                 return;
@@ -263,9 +326,9 @@ namespace LoL.Fluency
         /// <param name="startTime"></param>
         /// <param name="latencyMS"></param>
         /// <returns></returns>
-        public static bool AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMS)
+        public static bool AddResult (int a, int b, FluencyFactOperation operation, int? answer, DateTime startTime, int latencyMS)
         {
-            if (_SessionResults is null)
+            if (_SessionResults == null)
             {
                 Debug.LogError("[LoLFluencySDK] results not set. Did you call GameIsReady first?");
                 return false;
@@ -284,7 +347,7 @@ namespace LoL.Fluency
         /// <returns></returns>
         public static string GetLanguageText (string key, string defaultValue = null)
         {
-            if (_Instance is null || _GameLanguage is null)
+            if (_Instance == null || _GameLanguage == null)
             {
                 Debug.Log("[LoLFluencySDK] game language not set from fluency player");
                 return defaultValue;
@@ -347,7 +410,7 @@ namespace LoL.Fluency
                 try
                 {
                     var localState = GetLocal();
-                    if (!(localState is null))
+                    if (!(localState == null))
                     {
                         var localTimestamp = new DateTime(localState.timestamp, DateTimeKind.Utc);
                         if (localTimestamp > remoteTimestamp)
@@ -497,6 +560,7 @@ namespace LoL.Fluency
         {
             if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
             {
+                _OnTypingStart?.Invoke(null);
                 _OnAssessStart?.Invoke(null);
                 _OnEstablishStart?.Invoke(null);
                 _OnPracticeStart?.Invoke(null);
@@ -511,6 +575,8 @@ namespace LoL.Fluency
                 error += "\nData version: " + expectedClientInfo.version;
                 error += "\nRequested game type: " + expectedClientInfo.GameType.ToString();
                 error += "\nClient supported game types:";
+                if (_FluencyClientInfo._gameType.value.HasFlag(GameType.TYPING))
+                    error += " " + GameType.TYPING.ToString();
                 if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ASSESS))
                     error += " " + GameType.ASSESS.ToString();
                 if (_FluencyClientInfo._gameType.value.HasFlag(GameType.ESTABLISH))
@@ -525,6 +591,12 @@ namespace LoL.Fluency
             _FluencyClientInfo.playerGameType = expectedClientInfo.GameType;
             switch (expectedClientInfo.GameType)
             {
+                case GameType.TYPING:
+                    _SessionResults = new TypingResult();
+                    var typingData = JsonUtility.FromJson<TypingData>(json);
+                    _SessionStartData = typingData;
+                    _OnTypingStart(typingData);
+                    break;
                 case GameType.ASSESS:
                     _SessionResults = new AssessResult();
                     var assessData = JsonUtility.FromJson<AssessData>(json);
@@ -585,6 +657,7 @@ namespace LoL.Fluency
         ASSESS = 1 << 0,
         ESTABLISH = 1 << 1,
         PRACTICE = 1 << 2,
+        TYPING = 1 << 3,
     }
 
     internal struct UnityStringEnum<TEnum> where TEnum : struct
@@ -688,7 +761,11 @@ namespace LoL.Fluency
 
     public enum FluencyFactOperation
     {
-        ADD, DIV, MUL, SUB
+        ADD,
+        DIV,
+        MUL,
+        SUB,
+        MATCH, // Typing test
     }
 
     [Serializable]
@@ -726,6 +803,15 @@ namespace LoL.Fluency
     public interface ISessionStartData { }
 
     [Serializable]
+    public class TypingData : ISessionStartData
+    {
+        public int latencyThresholdMs = 5_000;
+        public int minCorrect = 10;
+        public int startRange;
+        public int endRange = 19;
+    }
+
+    [Serializable]
     public class AssessData : ISessionStartData
     {
         public FluencyFact[] facts;
@@ -759,7 +845,7 @@ namespace LoL.Fluency
 
     internal interface IResultable
     {
-        void AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMS);
+        void AddResult (int a, int b, FluencyFactOperation operation, int? answer, DateTime startTime, int latencyMS);
         string SerializeAndClear ();
     }
 
@@ -768,20 +854,22 @@ namespace LoL.Fluency
     {
         public List<FluencyTrialInput> trials;
 
-        public void AddResult (int a, int b, FluencyFactOperation operation, int answer, DateTime startTime, int latencyMs)
+        public void AddResult (int a, int b, FluencyFactOperation operation, int? answer, DateTime startTime, int latencyMs)
         {
             if (trials == null)
                 trials = new List<FluencyTrialInput>();
 
-            trials.Add(new FluencyTrialInput
+            var trial = new FluencyTrialInput
             {
                 a = a,
                 b = b,
                 op = operation.ToString(),
-                answer = answer,
+                answer = answer ?? int.MinValue,
                 startTime = startTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 latencyMs = latencyMs
-            });
+            };
+
+            trials.Add(trial);
         }
 
         public string SerializeAndClear ()
@@ -789,8 +877,43 @@ namespace LoL.Fluency
             if (trials == null || trials.Count == 0)
                 return null;
 
-            var json = JsonUtility.ToJson(this);
+            var json = JsonUtility.ToJson(this)
+                .Replace(int.MinValue.ToString(), "null");
+
             trials.Clear();
+            return json;
+        }
+    }
+
+    [Serializable]
+    internal class TypingResult : IResultable
+    {
+        public int inputLatencyMs;
+        List<int> _trials;
+
+        public void AddResult (int a, int b, FluencyFactOperation operation, int? answer, DateTime startTime, int latencyMS)
+        {
+            if (_trials == null)
+                _trials = new List<int>();
+
+            _trials.Add(latencyMS);
+        }
+
+        public string SerializeAndClear ()
+        {
+            if (_trials == null || _trials.Count == 0)
+                return null;
+
+            var total = 0;
+            foreach (var trial in _trials)
+            {
+                total += trial;
+            }
+
+            inputLatencyMs = total / _trials.Count;
+
+            var json = JsonUtility.ToJson(this);
+            _trials.Clear();
             return json;
         }
     }

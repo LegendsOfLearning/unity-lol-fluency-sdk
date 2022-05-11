@@ -12,6 +12,7 @@ namespace SomeDev.Test
         [SerializeField] Button save;
         [SerializeField] Button load;
         GameState _gameState;
+        PracticeData _practiceStartData;
 
         void Start ()
         {
@@ -20,17 +21,17 @@ namespace SomeDev.Test
             // NOTE: if you try to get starting data for a game type that isn't valid for that session, you'll get null.
             // i.e. Fluency Player starts a game type: INSTRUCT session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
             // So make sure the game sessions are separated in your unity client if your build can handle multiple game types.
-            var practiceStartData = LoLFluencySDK.GetStartData<PracticeData>();
+            _practiceStartData = LoLFluencySDK.GetStartData<PracticeData>();
 
             var value = "FACTS";
-            foreach (var fact in practiceStartData.facts)
+            foreach (var fact in _practiceStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            if (!(practiceStartData.targetFacts is null))
+            if (!(_practiceStartData.targetFacts is null))
             {
-                foreach (var fact in practiceStartData.targetFacts)
+                foreach (var fact in _practiceStartData.targetFacts)
                 {
                     value += $"\n{fact.a} {fact.op} {fact.b}";
                 }
@@ -44,14 +45,14 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.PracticeStartData.facts)
+            foreach (var fact in _practiceStartData.facts)
             {
                 LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
 
-            if (FluencyGameInit.PracticeStartData.targetFacts is null)
+            if (_practiceStartData.targetFacts is null)
                 return;
-            foreach (var fact in FluencyGameInit.PracticeStartData.targetFacts)
+            foreach (var fact in _practiceStartData.targetFacts)
             {
                 LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }

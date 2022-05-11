@@ -1,3 +1,4 @@
+using LoL.Fluency;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,19 +13,22 @@ namespace SomeDev.Test
         [SerializeField] Button load;
         GameState _gameState;
 
+        EstablishData _establishStartData;
+
         void Start ()
         {
-            title.text = LoL.Fluency.LoLFluencySDK.GetLanguageText("inEstablish", "IN ESTABLISH");
-            var value = FluencyGameInit.EstablishStartData.concept.ToString();
+            _establishStartData = LoLFluencySDK.GetStartData<EstablishData>();
+            title.text = LoLFluencySDK.GetLanguageText("inEstablish", "IN ESTABLISH");
+            var value = _establishStartData.concept.ToString();
             value += "\n\nFACTS";
-            foreach (var fact in FluencyGameInit.EstablishStartData.facts)
+            foreach (var fact in _establishStartData.facts)
             {
                 value += $"\n{fact.a} {fact.op} {fact.b}";
             }
             value += "\n\nTARGET FACTS";
-            if (!(FluencyGameInit.EstablishStartData.targetFacts is null))
+            if (!(_establishStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.EstablishStartData.targetFacts)
+                foreach (var fact in _establishStartData.targetFacts)
                 {
                     value += $"\n{fact.a} {fact.op} {fact.b}";
                 }
@@ -38,20 +42,20 @@ namespace SomeDev.Test
 
         void SendResults ()
         {
-            foreach (var fact in FluencyGameInit.EstablishStartData.facts)
+            foreach (var fact in _establishStartData.facts)
             {
-                LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
+                LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
             }
 
-            if (!(FluencyGameInit.EstablishStartData.targetFacts is null))
+            if (!(_establishStartData.targetFacts is null))
             {
-                foreach (var fact in FluencyGameInit.EstablishStartData.targetFacts)
+                foreach (var fact in _establishStartData.targetFacts)
                 {
-                    LoL.Fluency.LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
+                    LoLFluencySDK.AddResult(fact.a, fact.b, fact.Operation, Random.Range(fact.a, fact.b), System.DateTime.UtcNow, Random.Range(100, 300));
                 }
             }
 
-            LoL.Fluency.LoLFluencySDK.SendResults();
+            LoLFluencySDK.SendResults();
         }
 
         void Save ()
@@ -62,12 +66,12 @@ namespace SomeDev.Test
                 retry = Random.Range(0, 10),
                 score = Random.Range(0, 2000)
             };
-            LoL.Fluency.LoLFluencySDK.SaveGameState(_gameState, OnSaveResult);
+            LoLFluencySDK.SaveGameState(_gameState, OnSaveResult);
         }
 
         void Load ()
         {
-            LoL.Fluency.LoLFluencySDK.LoadGameState<GameState>(Load);
+            LoLFluencySDK.LoadGameState<GameState>(Load);
         }
 
         void OnSaveResult (bool success)

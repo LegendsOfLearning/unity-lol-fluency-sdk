@@ -14,17 +14,16 @@ namespace SomeDev.Test
 
     public class FluencyGameInit : MonoBehaviour
     {
-        public static AssessData AssessStartData { get; private set; }
-        public static EstablishData EstablishStartData { get; private set; }
-        public static PracticeData PracticeStartData { get; private set; }
-
         [SerializeField] UnityEngine.UI.Text text;
         const string _NoDataMsg = "No {0} provided!\nIs the client hosted by an LoL Fluency Player?";
 
         // Start is called before the first frame update
         void Start ()
         {
+            EmbeddedFluencyPlayer.Init(new FluencyNetwork());
+
             // Register for all game types your build can support.
+            LoLFluencySDK.InitTyping(OnTypingStart);
             LoLFluencySDK.InitAssess(OnAssessStart);
             LoLFluencySDK.InitEstablish(OnEstablishStart);
             LoLFluencySDK.InitPractice(OnPracticeData);
@@ -40,15 +39,25 @@ namespace SomeDev.Test
             // So make sure the game sessions are separated in your unity client if your build can support multiple game types.
         }
 
+        void OnTypingStart (TypingData typingData)
+        {
+            if (typingData == null)
+            {
+                text.text = string.Format(_NoDataMsg, nameof(typingData));
+                return;
+            }
+
+            SceneManager.LoadSceneAsync("TypingScene");
+        }
+
         void OnAssessStart (AssessData assessData)
         {
             if (assessData == null)
             {
-                text.text = string.Format(_NoDataMsg, nameof(AssessStartData));
+                text.text = string.Format(_NoDataMsg, nameof(assessData));
                 return;
             }
 
-            AssessStartData = assessData;
             SceneManager.LoadSceneAsync("AssessScene");
         }
 
@@ -56,11 +65,10 @@ namespace SomeDev.Test
         {
             if (establishData == null)
             {
-                text.text = string.Format(_NoDataMsg, nameof(EstablishStartData));
+                text.text = string.Format(_NoDataMsg, nameof(establishData));
                 return;
             }
 
-            EstablishStartData = establishData;
             SceneManager.LoadSceneAsync("establishScene");
         }
 
@@ -68,11 +76,10 @@ namespace SomeDev.Test
         {
             if (practiceData == null)
             {
-                text.text = string.Format(_NoDataMsg, nameof(PracticeStartData));
+                text.text = string.Format(_NoDataMsg, nameof(practiceData));
                 return;
             }
 
-            PracticeStartData = practiceData;
             SceneManager.LoadSceneAsync("PracticeScene");
         }
     }
