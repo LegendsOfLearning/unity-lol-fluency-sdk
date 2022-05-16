@@ -1,17 +1,30 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_WEBGL && !UNITY_EDITOR
 using System.Runtime.InteropServices;
+#endif
 using UnityEngine;
 
 namespace LoL.Fluency
 {
     public class LoLFluencySDK : MonoBehaviour
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
         static extern void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams);
         [DllImport("__Internal")]
         static extern void _PostWindowMessage (string msg, string payload);
+#else
+        static void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
+        {
+
+        }
+
+        static void _PostWindowMessage (string msg, string payload)
+        {
+
+        }
 
         static void _EditorGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
@@ -63,6 +76,7 @@ namespace LoL.Fluency
             json = JsonUtility.ToJson(new KeyValueData { key = msg, value = json });
             _Instance.ReceiveData(json);
         }
+#endif
 
         static void SendLocalLanguageJson ()
         {
@@ -785,6 +799,12 @@ namespace LoL.Fluency
         }
     }
 
+    [Serializable]
+    public class FactFamilies
+    {
+        public FluencyFact[] factFamily;
+    }
+
     public enum FluencySessionPracticeConcept
     {
         NONE,
@@ -821,6 +841,7 @@ namespace LoL.Fluency
     public class EstablishData : ISessionStartData
     {
         public string concept;
+        public FactFamilies[] factFamilies;
         public FluencyFact[] targetFacts;
         public FluencyFact[] facts;
 
