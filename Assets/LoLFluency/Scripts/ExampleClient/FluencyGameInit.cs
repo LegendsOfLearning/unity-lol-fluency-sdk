@@ -14,73 +14,35 @@ namespace SomeDev.Test
 
     public class FluencyGameInit : MonoBehaviour
     {
-        [SerializeField] UnityEngine.UI.Text text;
-        const string _NoDataMsg = "No {0} provided!\nIs the client hosted by an LoL Fluency Player?";
-
         // Start is called before the first frame update
         void Start ()
         {
-            EmbeddedFluencyPlayer.Init(new FluencyNetwork());
+            EmbeddedFluencyPlayer.Init(new FluencyNetwork(), Debug.isDebugBuild);
 
             // Register for all game types your build can support.
-            LoLFluencySDK.InitTyping(OnTypingStart);
-            LoLFluencySDK.InitAssess(OnAssessStart);
-            LoLFluencySDK.InitEstablish(OnEstablishStart);
-            LoLFluencySDK.InitPractice(OnPracticeData);
+            LoLFluencySDK.Init(OnGameStart, GameType.TYPING, GameType.ASSESS, GameType.ESTABLISH, GameType.PRACTICE);
 
             // Let the sdk know to alert the Fluency Player that the client is ready.
             LoLFluencySDK.GameIsReady();
-
-            // If you don't use a static variable for your start data, you can get the starting data from the sdk.
-            // var practiceStartData = LoLFluencySDK.GetStartData<PracticeData>();
-
-            // NOTE: if you try to get starting data for a game type that isn't valid for that session, you'll get null.
-            // i.e. Fluency Player starts a game type: ESTABLISH session and unity client is requesting LoLFluencySDK.GetStartData<AssessData>()
-            // So make sure the game sessions are separated in your unity client if your build can support multiple game types.
         }
 
-        void OnTypingStart (TypingData typingData)
+        void OnGameStart (GameType gameType)
         {
-            if (typingData == null)
+            switch (gameType)
             {
-                text.text = string.Format(_NoDataMsg, nameof(typingData));
-                return;
+                case GameType.TYPING:
+                    SceneManager.LoadSceneAsync("TypingScene");
+                    break;
+                case GameType.ASSESS:
+                    SceneManager.LoadSceneAsync("AssessScene");
+                    break;
+                case GameType.ESTABLISH:
+                    SceneManager.LoadSceneAsync("EstablishScene");
+                    break;
+                case GameType.PRACTICE:
+                    SceneManager.LoadSceneAsync("PracticeScene");
+                    break;
             }
-
-            SceneManager.LoadSceneAsync("TypingScene");
-        }
-
-        void OnAssessStart (AssessData assessData)
-        {
-            if (assessData == null)
-            {
-                text.text = string.Format(_NoDataMsg, nameof(assessData));
-                return;
-            }
-
-            SceneManager.LoadSceneAsync("AssessScene");
-        }
-
-        void OnEstablishStart (EstablishData establishData)
-        {
-            if (establishData == null)
-            {
-                text.text = string.Format(_NoDataMsg, nameof(establishData));
-                return;
-            }
-
-            SceneManager.LoadSceneAsync("establishScene");
-        }
-
-        void OnPracticeData (PracticeData practiceData)
-        {
-            if (practiceData == null)
-            {
-                text.text = string.Format(_NoDataMsg, nameof(practiceData));
-                return;
-            }
-
-            SceneManager.LoadSceneAsync("PracticeScene");
         }
     }
 }

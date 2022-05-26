@@ -9,12 +9,12 @@ namespace LoL.Fluency
         IFluencyRequest _fluencyRequest;
         internal float _progress;
 
-        internal static EmbeddedFluencyPlayer Init (IFluencyRequest fluencyRequest)
+        internal static EmbeddedFluencyPlayer Init (IFluencyRequest fluencyRequest, bool useTestData)
         {
             if (_Instance == null)
             {
                 _Instance = new GameObject($"__{nameof(EmbeddedFluencyPlayer)}__").AddComponent<EmbeddedFluencyPlayer>();
-                _Instance._Init(fluencyRequest);
+                _Instance._Init(fluencyRequest, useTestData);
                 DontDestroyOnLoad(_Instance.gameObject);
             }
 
@@ -48,10 +48,14 @@ namespace LoL.Fluency
             _fluencyRequest = null;
         }
 
-        internal void _Init (IFluencyRequest fluencyRequest)
+        internal void _Init (IFluencyRequest fluencyRequest, bool useTestData)
         {
             _fluencyRequest = fluencyRequest;
-            _SDK = LoLFluencySDK.InitEmbeddedPlayer(GameIsReady, PostWindowMessage);
+
+            if(useTestData)
+                _SDK = LoLFluencySDK.InitEmbeddedPlayer(null, null);
+            else
+                _SDK = LoLFluencySDK.InitEmbeddedPlayer(GameIsReady, PostWindowMessage);
         }
 
         void GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)

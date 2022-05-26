@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
 using System.Runtime.InteropServices;
 #endif
 using UnityEngine;
@@ -10,7 +10,12 @@ namespace LoL.Fluency
 {
     public class LoLFluencySDK : MonoBehaviour
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
+        const string _TestTypingData = @"{""gameType"":""TYPING"",""version"":""1.0.0""}";
+        const string _TestAssessData = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""ADD""},{""a"":4,""b"":1,""op"":""ADD""},{""a"":11,""b"":10,""op"":""SUB""},{""a"":2,""b"":3,""op"":""ADD""},{""a"":2,""b"":2,""op"":""SUB""},{""a"":6,""b"":1,""op"":""SUB""},{""a"":6,""b"":5,""op"":""SUB""},{""a"":1,""b"":6,""op"":""ADD""},{""a"":7,""b"":6,""op"":""SUB""},{""a"":1,""b"":1,""op"":""ADD""},{""a"":14,""b"":7,""op"":""SUB""},{""a"":0,""b"":1,""op"":""ADD""},{""a"":1,""b"":1,""op"":""SUB""},{""a"":0,""b"":7,""op"":""ADD""},{""a"":7,""b"":7,""op"":""SUB""},{""a"":0,""b"":9,""op"":""ADD""},{""a"":9,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""SUB""},{""a"":4,""b"":4,""op"":""ADD""},{""a"":8,""b"":4,""op"":""SUB""},{""a"":5,""b"":5,""op"":""ADD""},{""a"":10,""b"":5,""op"":""SUB""},{""a"":6,""b"":6,""op"":""ADD""},{""a"":12,""b"":6,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}]}";
+        const string _TestEstablishData = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""ADDITION"",""factFamilies"":[{""factFamily"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""}]},{""factFamily"":[{""a"":8,""b"":8,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""}]}],""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
+        const string _TestPracticeData = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":1,""b"":0,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":1,""b"":8,""op"":""ADD""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":0,""b"":0,""op"":""ADD""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":4,""b"":2,""op"":""SUB""},{""a"":8,""b"":1,""op"":""SUB""},{""a"":2,""b"":0,""op"":""SUB""},{""a"":9,""b"":1,""op"":""SUB""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":7,""b"":7,""op"":""ADD""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":5,""b"":3,""op"":""SUB""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":1,""b"":7,""op"":""ADD""},{""a"":0,""b"":2,""op"":""ADD""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":2,""b"":1,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
+
+#if UNITY_WEBGL
         [DllImport("__Internal")]
         static extern void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams);
         [DllImport("__Internal")]
@@ -18,45 +23,71 @@ namespace LoL.Fluency
 #else
         static void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
-
+            // no op
         }
 
         static void _PostWindowMessage (string msg, string payload)
         {
-
+            // no op
         }
-
-        static void _EditorGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
+#endif
+        static void _TestGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
-            string json;
-            if (_FluencyClientInfo.GameType.HasFlag(GameType.PRACTICE))
+            if (_FluencyClientInfo.GameType.HasFlag(GameType.TYPING))
             {
-                json = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":4,""b"":2,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
-            }
-            else if (_FluencyClientInfo.GameType.HasFlag(GameType.ESTABLISH))
-            {
-                json = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""facts"":[{""a"":1,""b"":2,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":4,""op"":""MUL""}]}";
+                _TestGameType = GameType.NONE;
             }
             else if (_FluencyClientInfo.GameType.HasFlag(GameType.ASSESS))
             {
-                json = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
+                _TestGameType = GameType.TYPING;
             }
-            else if (_FluencyClientInfo.GameType.HasFlag(GameType.TYPING))
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.ESTABLISH))
             {
-                json = @"{""gameType"":""TYPING"",""version"":""1.0.0""}";
+                _TestGameType = GameType.ASSESS;
             }
-            else
+            else if (_FluencyClientInfo.GameType.HasFlag(GameType.PRACTICE))
             {
-                json = @"{""gameType"":""TESTING FAIL"",""version"":""1.0.0"",""facts"":[{""a"":3,""b"":2,""op"":""SUB""}]}";
+                _TestGameType = GameType.ESTABLISH;
             }
 
-            json = JsonUtility.ToJson(new KeyValueData { key = "start", value = json });
-            _Instance.ReceiveData(json);
+            SendTestStartData();
 
             SendLocalLanguageJson();
         }
 
-        static void _EditorPostWindowMessage (string msg, string payload)
+        static GameType _TestGameType;
+        static string GetTestSessionData ()
+        {
+            switch (_TestGameType)
+            {
+                case GameType.NONE:
+                    _TestGameType = GameType.TYPING;
+                    return _TestTypingData; 
+                case GameType.TYPING:
+                    _TestGameType = GameType.ASSESS;
+                    return _TestAssessData;
+                case GameType.ASSESS:
+                    _TestGameType = GameType.ESTABLISH;
+                    return _TestEstablishData;
+                case GameType.ESTABLISH:
+                    _TestGameType = GameType.PRACTICE;
+                    return _TestPracticeData;
+                case GameType.PRACTICE: // Keep playing.
+                default:
+                    return null;
+            }
+        }
+
+        static void SendTestStartData ()
+        {
+            // Get session data progresses the _TestGameType to the next game state.
+            string json = GetTestSessionData();
+
+            json = JsonUtility.ToJson(new KeyValueData { key = "start", value = json });
+            _Instance.ReceiveData(json);
+        }
+
+        static void _TestPostWindowMessage (string msg, string payload)
         {
             Debug.Log("Post window message: " + msg + " : " + payload);
             string json;
@@ -69,6 +100,9 @@ namespace LoL.Fluency
                     msg = "saveStateResult";
                     json = JsonUtility.ToJson(new SaveStateResults { success = true });
                     break;
+                case "results":
+                    SendTestStartData();
+                    return;
                 default: // Start doesn't have a return receiver.
                     return;
             }
@@ -76,7 +110,6 @@ namespace LoL.Fluency
             json = JsonUtility.ToJson(new KeyValueData { key = msg, value = json });
             _Instance.ReceiveData(json);
         }
-#endif
 
         static void SendLocalLanguageJson ()
         {
@@ -105,25 +138,19 @@ namespace LoL.Fluency
         {
             _Instance = null;
             _FluencyClientInfo = null;
-            _OnTypingStart = null;
-            _OnAssessStart = null;
-            _OnEstablishStart = null;
-            _OnPracticeStart = null;
+            _OnGameStart = null;
             _OnLoadState = null;
             _OnSaveStateResults = null;
             _GameLanguage = null;
             _SessionResults = null;
             _SessionStartData = null;
-            _EmbeddedGameIsReady = null;
-            _EmbeddedPostMessage = null;
+            Game_Is_Ready = null;
+            Post_Message = null;
         }
 
         static FluencyClientInfo _FluencyClientInfo;
 
-        static Action<TypingData> _OnTypingStart;
-        static Action<AssessData> _OnAssessStart;
-        static Action<EstablishData> _OnEstablishStart;
-        static Action<PracticeData> _OnPracticeStart;
+        static Action<GameType> _OnGameStart;
         static Action<string> _OnLoadState;
         static Action<bool> _OnSaveStateResults;
 
@@ -132,115 +159,49 @@ namespace LoL.Fluency
         static ISessionStartData _SessionStartData;
         const string _EmptyJSON = "{}";
 
-        static Action<string, string, string, string, string> _EmbeddedGameIsReady;
-        static Action<string, string> _EmbeddedPostMessage;
+        static Action<string, string, string, string, string> Game_Is_Ready;
+        static Action<string, string> Post_Message;
 
         public static LoLFluencySDK InitEmbeddedPlayer (
             Action<string, string, string, string, string> embeddedGameIsReady,
             Action<string, string> embeddedPostMessage)
         {
-            _EmbeddedGameIsReady = embeddedGameIsReady;
-            _EmbeddedPostMessage = embeddedPostMessage;
+            Game_Is_Ready = embeddedGameIsReady;
+            Post_Message = embeddedPostMessage;
             return CreateSDK();
         }
 
-        /// <summary>
-        /// Initialize TYPING game type if unity client can assess Typing Speed.
-        /// <para>
-        /// Fluency Player will send the proper data to client based on the user's current session.
-        /// </para>
-        /// <para>
-        /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
-        /// </para>
-        /// </summary>
-        /// <param name="onAssessStart"></param>
-        public static void InitTyping (Action<TypingData> onTypingStart)
+        public static void Init (Action<GameType> onGameStart, params GameType[] supportedGameTypes)
         {
-            if (onTypingStart == null)
+            if (onGameStart == null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onTypingStart) + " callback must be set.");
+                Debug.LogError("[LoLFluencySDK] " + nameof(onGameStart) + " callback must be set.");
                 return;
             }
 
-            CreateSDK();
-            _OnTypingStart = onTypingStart;
-            _FluencyClientInfo._gameType.value |= GameType.TYPING;
-            _FluencyClientInfo._gameType.isSet = true;
-        }
-
-        /// <summary>
-        /// Initialize ASSESS game type if unity client can assess the Initial Fact Assessment.
-        /// <para>
-        /// Fluency Player will send the proper data to client based on the user's current session.
-        /// </para>
-        /// <para>
-        /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
-        /// </para>
-        /// </summary>
-        /// <param name="onAssessStart"></param>
-        public static void InitAssess (Action<AssessData> onAssessStart)
-        {
-            if (onAssessStart == null)
+            if (Game_Is_Ready == null)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onAssessStart) + " callback must be set.");
-                return;
+                if (Debug.isDebugBuild)
+                    Game_Is_Ready = _TestGameIsReady;
+                else
+                    Game_Is_Ready = _GameIsReady;
+            }
+
+            if (Post_Message == null)
+            {
+                if (Debug.isDebugBuild)
+                    Post_Message = _TestPostWindowMessage;
+                else
+                    Post_Message = _PostWindowMessage;
             }
 
             CreateSDK();
-            _OnAssessStart = onAssessStart;
-            _FluencyClientInfo._gameType.value |= GameType.ASSESS;
-            _FluencyClientInfo._gameType.isSet = true;
-        }
-
-        /// <summary>
-        /// Initialize ESTABLISH game type if unity client can assess Activate (conceptual instruction), Recall (cover-copy-compare), and Practice (timed fact practice).
-        /// <para>
-        /// Fluency Player will send the proper data to client based on the user's current session.
-        /// </para>
-        /// <para>
-        /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
-        /// </para>
-        /// </summary>
-        /// <param name="onEstablishStart"></param>
-        public static void InitEstablish (Action<EstablishData> onEstablishStart)
-        {
-            if (onEstablishStart == null)
+            _OnGameStart = onGameStart;
+            foreach (var gameType in supportedGameTypes)
             {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onEstablishStart) + " callback must be set.");
-                return;
+                _FluencyClientInfo._gameType.value |= gameType;
             }
 
-            CreateSDK();
-            _OnEstablishStart = onEstablishStart;
-            _FluencyClientInfo._gameType.value |= GameType.ESTABLISH;
-            _FluencyClientInfo._gameType.isSet = true;
-        }
-
-        /// <summary>
-        /// Initialize PRACTICE game type if unity client can assess Distracted Play Fact Practice.
-        /// <para>
-        /// Fluency Player will send the proper data to client based on the user's current session.
-        /// </para>
-        /// <para>
-        /// <strong>NOTE:</strong> Only one game type will be act per client load.
-        /// i.e. Client will either be in TYPING, ASSESS, ESTABLISH, or PRACTICE on load.
-        /// </para>
-        /// </summary>
-        /// <param name="onPracticeStart"></param>
-        public static void InitPractice (Action<PracticeData> onPracticeStart)
-        {
-            if (onPracticeStart == null)
-            {
-                Debug.LogError("[LoLFluencySDK] " + nameof(onPracticeStart) + " callback must be set.");
-                return;
-            }
-
-            CreateSDK();
-            _OnPracticeStart = onPracticeStart;
-            _FluencyClientInfo._gameType.value |= GameType.PRACTICE;
             _FluencyClientInfo._gameType.isSet = true;
         }
 
@@ -266,23 +227,35 @@ namespace LoL.Fluency
             _Receivers.Keys.CopyTo(sdkOptions.supportedReceiverKeys, 0);
             var sdkOptionsJson = JsonUtility.ToJson(sdkOptions);
 
-            Action<string, string, string, string, string> gameIsReady;
-            if (_EmbeddedGameIsReady != null)
-                gameIsReady = _EmbeddedGameIsReady;
-            else if (Application.isEditor)
-                gameIsReady = _EditorGameIsReady;
-            else
-                gameIsReady = _GameIsReady;
-
-            gameIsReady(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version, sdkOptionsJson);
+            Game_Is_Ready(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version, sdkOptionsJson);
         }
 
         public static TData GetStartData<TData> () where TData : class, ISessionStartData
         {
             if (_Instance == null)
             {
-                Debug.LogError("[LoLFluencySDK] Trying to get start data before GameIsReady.");
-                return null;
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning($"[LoLFluencySDK] Using testing start data for {typeof(TData)}.");
+                    Game_Is_Ready = _TestGameIsReady;
+                    Post_Message = _TestPostWindowMessage;
+                    var gameType = GameType.PRACTICE;
+                    var dataType = typeof(TData);
+                    if (dataType == typeof(TypingData))
+                        gameType = GameType.TYPING;
+                    else if (dataType == typeof(AssessData))
+                        gameType = GameType.ASSESS;
+                    else if (dataType == typeof(EstablishData))
+                        gameType = GameType.ESTABLISH;
+
+                    Init(gt => { }, gameType);
+                    GameIsReady();
+                }
+                else
+                {
+                    Debug.LogError("[LoLFluencySDK] Trying to get start data before GameIsReady.");
+                    return null;
+                }
             }
 
             if (_SessionStartData is TData startData)
@@ -296,14 +269,7 @@ namespace LoL.Fluency
 
         static void PostWindowMessage (string msg, string json)
         {
-            Action<string, string> postWindowMessage;
-            if (_EmbeddedPostMessage != null)
-                postWindowMessage = _EmbeddedPostMessage;
-            else if (Application.isEditor)
-                postWindowMessage = _EditorPostWindowMessage;
-            else
-                postWindowMessage = _PostWindowMessage;
-
+            var postWindowMessage = Post_Message ?? _PostWindowMessage;
             postWindowMessage(msg, json);
         }
 
@@ -545,6 +511,7 @@ namespace LoL.Fluency
             ["loadState"] = ReceiveLoadStateData,
             ["language"] = ReceiveLanguageJson,
             ["saveStateResult"] = ReceiveSaveStateResult,
+            ["useTestData"] = ReceiveUseTestData,
         };
 
         // called from jslib.
@@ -559,9 +526,9 @@ namespace LoL.Fluency
             var msgData = JsonUtility.FromJson<KeyValueData>(json);
             var key = msgData.key;
 
-            if (!_Receivers.TryGetValue(key, out var receiver))
+            if ((key == "useTestData" && !Debug.isDebugBuild) || !_Receivers.TryGetValue(key, out var receiver))
             {
-                Debug.LogWarning("[LoLFluencySDK] Receiver not implemented in sdk: " + key);
+                Debug.LogWarning("[LoLFluencySDK] Receiver not supported in sdk: " + key);
                 return;
             }
 
@@ -570,14 +537,21 @@ namespace LoL.Fluency
 
         // message receivers
 
+        static void ReceiveUseTestData (string _)
+        {
+            if (!Debug.isDebugBuild)
+                return;
+
+            Game_Is_Ready = _TestGameIsReady;
+            Post_Message = _TestPostWindowMessage;
+            GameIsReady();
+        }
+
         static void ReceiveStartData (string json)
         {
             if (string.IsNullOrEmpty(json) || !json.StartsWith("{") || json == _EmptyJSON)
             {
-                _OnTypingStart?.Invoke(null);
-                _OnAssessStart?.Invoke(null);
-                _OnEstablishStart?.Invoke(null);
-                _OnPracticeStart?.Invoke(null);
+                _OnGameStart?.Invoke(GameType.NONE);
                 return;
             }
 
@@ -609,30 +583,28 @@ namespace LoL.Fluency
                     _SessionResults = new TypingResult();
                     var typingData = JsonUtility.FromJson<TypingData>(json);
                     _SessionStartData = typingData;
-                    _OnTypingStart(typingData);
                     break;
                 case GameType.ASSESS:
                     _SessionResults = new AssessResult();
                     var assessData = JsonUtility.FromJson<AssessData>(json);
                     _SessionStartData = assessData;
-                    _OnAssessStart(assessData);
                     break;
                 case GameType.ESTABLISH:
                     _SessionResults = new EstablishResult();
                     var EstablishData = JsonUtility.FromJson<EstablishData>(json);
                     _SessionStartData = EstablishData;
-                    _OnEstablishStart(EstablishData);
                     break;
                 case GameType.PRACTICE:
                     _SessionResults = new PracticeResult();
                     var practiceData = JsonUtility.FromJson<PracticeData>(json);
                     _SessionStartData = practiceData;
-                    _OnPracticeStart(practiceData);
 
                     // Invoke SendResults on interval.
                     _Instance.StartCoroutine(_Instance._SendResultOnInterval());
                     break;
             }
+
+            _OnGameStart(expectedClientInfo.GameType);
         }
 
         static void ReceiveLoadStateData (string json)
@@ -662,10 +634,8 @@ namespace LoL.Fluency
         }
     }
 
-    // internal models
-
     [Flags]
-    internal enum GameType
+    public enum GameType
     {
         NONE = 0,
         ASSESS = 1 << 0,
@@ -673,6 +643,8 @@ namespace LoL.Fluency
         PRACTICE = 1 << 2,
         TYPING = 1 << 3,
     }
+
+    // internal models
 
     internal struct UnityStringEnum<TEnum> where TEnum : struct
     {
