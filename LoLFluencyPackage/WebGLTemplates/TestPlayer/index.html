@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Legends of Learning | Fluency Gameframe</title>
+  <script>
+    getGameDetails = () => {
+      let buildUrl = "Build";
+      return {
+        loaderUrl: buildUrl + "/{{{ LOADER_FILENAME }}}",
+        width: "{{{ WIDTH }}}",
+        height: "{{{ HEIGHT }}}",
+        config: {
+          dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+          frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+          codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+  #if MEMORY_FILENAME
+          memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+  #endif
+  #if SYMBOLS_FILENAME
+          symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+  #endif
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "{{{ COMPANY_NAME }}}",
+          productName: "{{{ PRODUCT_NAME }}}",
+          productVersion: "{{{ PRODUCT_VERSION }}}",
+        }
+      }
+    }
+
+    sendGameMessage = (messageName, payload) => {
+      payload = payload ? JSON.stringify(payload) : null
+
+      const iframe = document.getElementsByClassName('lol-game-iframe')[0]
+      if (iframe) {
+        console.info('[FLUENCY GAMEFRAME] - 📡 Sent game message to iframe:')
+        iframe.contentWindow.postMessage({ messageName, payload }, '*')
+      } else {
+        console.info('[FLUENCY GAMEFRAME] - 📡 Sent game message to window:')
+        window.postMessage({ messageName, payload }, '*')
+      }
+
+      console.info({ messageName, payload })
+    }
+
+    receiveGameMessages = ({
+      data,
+    }) => {
+      let { message, payload = null } = data
+      if (!message) return
+
+      const messageHandlers = {
+        init: (m, p) => this.sendGameMessage("useTestData", JSON.stringify({success: true}))
+      }
+
+      const handler = messageHandlers[message]
+      const isValid = typeof message === 'string' && typeof handler === 'function'
+
+      if (!isValid) {
+        return
+      }
+
+      console.info('[FLUENCY GAMEFRAME] - ⤵️ Received game message:', message, payload)
+      payload =
+        payload && typeof payload === 'string' ? JSON.parse(payload) : payload
+
+      if (isValid) handler(message, payload)
+    }
+
+    window.addEventListener('message', this.receiveGameMessages)
+  </script>
+</head>
+
+<body>
+  <iframe height="{{{ HEIGHT }}}" width="{{{ WIDTH }}}" class="lol-game-iframe" scrolling="no" src="minigame.html"
+    style="border: none; left: 50%; top: 50px; position: absolute; transform: scale(1) translateX(-50%); transform-origin: 0px 0px;">
+  </iframe>
+</body>
+
+</html>
