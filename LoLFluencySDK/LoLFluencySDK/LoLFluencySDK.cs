@@ -242,11 +242,11 @@ namespace LoL.Fluency
                     var gameType = GameType.PRACTICE;
                     var dataType = typeof(TData);
                     if (dataType == typeof(TypingData))
-                        gameType = GameType.TYPING;
+                        gameType |= GameType.TYPING | GameType.ASSESS | GameType.ESTABLISH;
                     else if (dataType == typeof(AssessData))
-                        gameType = GameType.ASSESS;
+                        gameType |= GameType.ASSESS | GameType.ESTABLISH;
                     else if (dataType == typeof(EstablishData))
-                        gameType = GameType.ESTABLISH;
+                        gameType |= GameType.ESTABLISH;
 
                     Init(gt => { }, gameType);
                     GameIsReady();
