@@ -4,14 +4,16 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
+    <link rel="stylesheet" href="https://game-cdn.legendsoflearning.com/assets/lol-fluency.css" />
+    <script src="https://game-cdn.legendsoflearning.com/assets/lol-fluency.js"></script>
   </head>
   <body style="text-align: center">
-    <canvas id="unity-canvas" style="padding: 0; margin: auto; display: block; width: 100%; height: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: #000000; opacity: 0;"></canvas>
+    <canvas id="unity-canvas"></canvas>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
-      var canvasElement = document.querySelector("#unity-canvas");
+      var unityCanvas = document.getElementById("unity-canvas");
 
-      createUnityInstance(canvasElement, {
+      createUnityInstance(unityCanvas, {
         dataUrl: "Build/{{{ DATA_FILENAME }}}",
         frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
         codeUrl: "Build/{{{ CODE_FILENAME }}}",
@@ -29,8 +31,7 @@
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       }).then((unityInstance) =>
       {
-        canvasElement.style.opacity = 1; //unhide canvas after loaded
-        canvasElement.focus();
+        onUnityInitialized(unityInstance, unityCanvas); //calls lol-fluency.js
       });
     </script>
   </body>
