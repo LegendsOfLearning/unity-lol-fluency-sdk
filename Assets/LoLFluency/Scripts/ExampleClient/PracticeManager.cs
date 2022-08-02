@@ -11,6 +11,7 @@ namespace SomeDev.Test
         [SerializeField] Button send;
         [SerializeField] Button save;
         [SerializeField] Button load;
+        [SerializeField] Button userSettings;
         GameState _gameState;
         PracticeData _practiceStartData;
 
@@ -41,6 +42,7 @@ namespace SomeDev.Test
             send.onClick.AddListener(SendResults);
             save.onClick.AddListener(Save);
             load.onClick.AddListener(Load);
+            userSettings.onClick.AddListener(UpdateUserSettings);
         }
 
         void SendResults ()
@@ -90,6 +92,17 @@ namespace SomeDev.Test
             }
             _gameState = state;
             Debug.Log("Received Practice load state: " + JsonUtility.ToJson(state));
+        }
+
+        void UpdateUserSettings ()
+        {
+            LoLFluencySDK.UpdateUserSettings(new UserSettings
+            {
+                musicOn = true,
+                sfxOn = false,
+                additionalSettings = new SerializableDictionary<string, string>
+                { ["inputVolume"] = "3.4" }
+            });
         }
     }
 }

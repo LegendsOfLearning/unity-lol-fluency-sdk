@@ -45,11 +45,13 @@ var LoLFluencyPlugin = {
 
         // If we are the parent, we're running the fluency game without a player.
         // Return null payload data to use embedded data in client for testing / demo.
-        if(parent == self) {
+        var queryParams = getQueryParams();
+        if(parent == self || !!queryParams["useTestData"] === true) {
+            var startData = {success: true, forceTestConcept: queryParams["concept"]};
             SendMessage(
                 targetGameObject,
                 callbackFunction,
-                JSON.stringify({key: 'start'})
+                JSON.stringify({key: 'useTestData', value: JSON.stringify(startData)})
             );
         }
     },

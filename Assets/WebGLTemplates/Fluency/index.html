@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
+    <title>Math Basecamp | {{{ PRODUCT_NAME }}}</title>
     <link rel="stylesheet" href="https://game-cdn.legendsoflearning.com/assets/lol-fluency.css" />
     <script src="https://game-cdn.legendsoflearning.com/assets/lol-fluency.js"></script>
   </head>
@@ -11,6 +11,24 @@
     <canvas id="unity-canvas"></canvas>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
+      const getQueryParams = () => {
+        const url = window.location.href;
+        let queryParams = {};
+        //create an anchor tag to use the property called search
+        let anchor = document.createElement('a');
+        //assigning url to href of anchor tag
+        anchor.href = url;
+        //search property returns the query string of url
+        let queryStrings = anchor.search.substring(1);
+        let params = queryStrings.split('&');
+
+        for (var i = 0; i < params.length; i++) {
+            var pair = params[i].split('=');
+            queryParams[pair[0]] = decodeURIComponent(pair[1]);
+        }
+        return queryParams;
+      };
+
       var unityCanvas = document.getElementById("unity-canvas");
 
       createUnityInstance(unityCanvas, {

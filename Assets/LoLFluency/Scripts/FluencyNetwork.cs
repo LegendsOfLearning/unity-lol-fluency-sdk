@@ -16,12 +16,10 @@ namespace LoL.Fluency
 
         void IFluencyRequest.GetFluencySessionActivity (Action<string, float> callback)
         {
-
         }
 
         void IFluencyRequest.PutFluencyTrials (Results results, Action<AckData> callback)
         {
-
         }
     }
 

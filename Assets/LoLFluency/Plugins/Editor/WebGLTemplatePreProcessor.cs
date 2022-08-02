@@ -25,10 +25,9 @@ namespace LoL.Fluency.Editor
         {
             string oldTemplate = PlayerSettings.WebGL.template;
             string newTemplate = "PROJECT:Fluency";
-            string testTemplate = "PROJECT:TestPlayer";
 
-            if ((oldTemplate == newTemplate) || (oldTemplate == testTemplate))
-                return; //either project templates are valid for now. Remove the TestPlayer template once the SDK has the proper test data
+            if (oldTemplate == newTemplate)
+                return;
 
             Debug.Log($"[FluencySDK] Setting webgl template, old={oldTemplate}, new={newTemplate}");
             PlayerSettings.WebGL.template = newTemplate;

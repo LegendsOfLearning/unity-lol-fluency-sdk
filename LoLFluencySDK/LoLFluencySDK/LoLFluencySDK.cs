@@ -11,9 +11,13 @@ namespace LoL.Fluency
     public class LoLFluencySDK : MonoBehaviour
     {
         const string _TestTypingData = @"{""gameType"":""TYPING"",""version"":""1.0.0""}";
-        const string _TestAssessData = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""ADD""},{""a"":4,""b"":1,""op"":""ADD""},{""a"":11,""b"":10,""op"":""SUB""},{""a"":2,""b"":3,""op"":""ADD""},{""a"":2,""b"":2,""op"":""SUB""},{""a"":6,""b"":1,""op"":""SUB""},{""a"":6,""b"":5,""op"":""SUB""},{""a"":1,""b"":6,""op"":""ADD""},{""a"":7,""b"":6,""op"":""SUB""},{""a"":1,""b"":1,""op"":""ADD""},{""a"":14,""b"":7,""op"":""SUB""},{""a"":0,""b"":1,""op"":""ADD""},{""a"":1,""b"":1,""op"":""SUB""},{""a"":0,""b"":7,""op"":""ADD""},{""a"":7,""b"":7,""op"":""SUB""},{""a"":0,""b"":9,""op"":""ADD""},{""a"":9,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""SUB""},{""a"":4,""b"":4,""op"":""ADD""},{""a"":8,""b"":4,""op"":""SUB""},{""a"":5,""b"":5,""op"":""ADD""},{""a"":10,""b"":5,""op"":""SUB""},{""a"":6,""b"":6,""op"":""ADD""},{""a"":12,""b"":6,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}]}";
-        const string _TestEstablishData = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""ADDITION"",""factFamilies"":[{""factFamily"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""}]},{""factFamily"":[{""a"":8,""b"":8,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""}]}],""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
-        const string _TestPracticeData = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":1,""b"":0,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":1,""b"":8,""op"":""ADD""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":0,""b"":0,""op"":""ADD""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":4,""b"":2,""op"":""SUB""},{""a"":8,""b"":1,""op"":""SUB""},{""a"":2,""b"":0,""op"":""SUB""},{""a"":9,""b"":1,""op"":""SUB""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":7,""b"":7,""op"":""ADD""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":5,""b"":3,""op"":""SUB""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":1,""b"":7,""op"":""ADD""},{""a"":0,""b"":2,""op"":""ADD""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":2,""b"":1,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
+        const string _TestAddAssessData = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":1,""b"":2,""op"":""ADD""},{""a"":4,""b"":1,""op"":""ADD""},{""a"":11,""b"":10,""op"":""SUB""},{""a"":2,""b"":3,""op"":""ADD""},{""a"":2,""b"":2,""op"":""SUB""},{""a"":6,""b"":1,""op"":""SUB""},{""a"":6,""b"":5,""op"":""SUB""},{""a"":1,""b"":6,""op"":""ADD""},{""a"":7,""b"":6,""op"":""SUB""},{""a"":1,""b"":1,""op"":""ADD""},{""a"":14,""b"":7,""op"":""SUB""},{""a"":0,""b"":1,""op"":""ADD""},{""a"":1,""b"":1,""op"":""SUB""},{""a"":0,""b"":7,""op"":""ADD""},{""a"":7,""b"":7,""op"":""SUB""},{""a"":0,""b"":9,""op"":""ADD""},{""a"":9,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""SUB""},{""a"":4,""b"":4,""op"":""ADD""},{""a"":8,""b"":4,""op"":""SUB""},{""a"":5,""b"":5,""op"":""ADD""},{""a"":10,""b"":5,""op"":""SUB""},{""a"":6,""b"":6,""op"":""ADD""},{""a"":12,""b"":6,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}]}";
+        const string _TestAddEstablishData = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""ADDITION"",""factFamilies"":[{""factFamily"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""}]},{""factFamily"":[{""a"":8,""b"":8,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""}]}],""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":9,""b"":9,""op"":""ADD""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":8,""b"":8,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
+        const string _TestAddPracticeData = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""},{""a"":2,""b"":1,""op"":""SUB""},{""a"":1,""b"":0,""op"":""ADD""},{""a"":3,""b"":1,""op"":""SUB""},{""a"":4,""b"":3,""op"":""SUB""},{""a"":6,""b"":1,""op"":""ADD""},{""a"":10,""b"":9,""op"":""SUB""},{""a"":1,""b"":8,""op"":""ADD""},{""a"":8,""b"":1,""op"":""ADD""},{""a"":10,""b"":1,""op"":""SUB""},{""a"":0,""b"":0,""op"":""ADD""},{""a"":2,""b"":2,""op"":""ADD""},{""a"":4,""b"":2,""op"":""SUB""},{""a"":8,""b"":1,""op"":""SUB""},{""a"":2,""b"":0,""op"":""SUB""},{""a"":9,""b"":1,""op"":""SUB""},{""a"":6,""b"":3,""op"":""SUB""},{""a"":7,""b"":7,""op"":""ADD""},{""a"":0,""b"":0,""op"":""SUB""},{""a"":5,""b"":3,""op"":""SUB""},{""a"":5,""b"":2,""op"":""SUB""},{""a"":1,""b"":7,""op"":""ADD""},{""a"":0,""b"":2,""op"":""ADD""},{""a"":7,""b"":0,""op"":""ADD""},{""a"":2,""b"":1,""op"":""ADD""},{""a"":3,""b"":1,""op"":""ADD""}],""targetFacts"":[{""a"":9,""b"":9,""op"":""ADD""},{""a"":18,""b"":9,""op"":""SUB""},{""a"":16,""b"":8,""op"":""SUB""}]}";
+
+        const string _TestMulAssessData = @"{""gameType"":""ASSESS"",""version"":""1.0.0"",""facts"":[{""a"":8,""b"":2,""op"":""DIV""},{""a"":2,""b"":5,""op"":""MUL""},{""a"":8,""b"":2,""op"":""MUL""},{""a"":2,""b"":9,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":3,""b"":2,""op"":""MUL""},{""a"":4,""b"":2,""op"":""DIV""},{""a"":14,""b"":2,""op"":""DIV""},{""a"":2,""b"":4,""op"":""MUL""},{""a"":14,""b"":7,""op"":""DIV""},{""a"":2,""b"":8,""op"":""MUL""},{""a"":2,""b"":7,""op"":""MUL""},{""a"":2,""b"":3,""op"":""MUL""},{""a"":4,""b"":2,""op"":""MUL""},{""a"":16,""b"":2,""op"":""DIV""},{""a"":2,""b"":10,""op"":""MUL""},{""a"":8,""b"":4,""op"":""DIV""},{""a"":6,""b"":2,""op"":""MUL""},{""a"":18,""b"":9,""op"":""DIV""},{""a"":2,""b"":2,""op"":""MUL""},{""a"":5,""b"":2,""op"":""MUL""},{""a"":12,""b"":6,""op"":""DIV""},{""a"":10,""b"":5,""op"":""DIV""},{""a"":18,""b"":2,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""},{""a"":7,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":12,""b"":2,""op"":""DIV""},{""a"":9,""b"":2,""op"":""MUL""},{""a"":6,""b"":3,""op"":""DIV""},{""a"":6,""b"":2,""op"":""DIV""},{""a"":16,""b"":8,""op"":""DIV""},{""a"":10,""b"":2,""op"":""DIV""},{""a"":2,""b"":6,""op"":""MUL""},{""a"":10,""b"":3,""op"":""MUL""},{""a"":4,""b"":10,""op"":""MUL""}]}";
+        const string _TestMulEstablishData = @"{""gameType"":""ESTABLISH"",""version"":""1.0.0"",""concept"":""MULTIPLICATION"",""factFamilies"":[{""factFamily"":[{""a"":2,""b"":10,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""}]}],""facts"":[{""a"":2,""b"":10,""op"":""MUL""},{""a"":18,""b"":2,""op"":""DIV""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":14,""b"":7,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""},{""a"":2,""b"":5,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":6,""b"":2,""op"":""DIV""},{""a"":2,""b"":10,""op"":""MUL""},{""a"":2,""b"":4,""op"":""MUL""},{""a"":2,""b"":7,""op"":""MUL""},{""a"":20,""b"":10,""op"":""DIV""},{""a"":2,""b"":8,""op"":""MUL""},{""a"":12,""b"":6,""op"":""DIV""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":12,""b"":6,""op"":""DIV""},{""a"":9,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":10,""b"":10,""op"":""MUL""},{""a"":8,""b"":2,""op"":""MUL""},{""a"":20,""b"":10,""op"":""DIV""},{""a"":2,""b"":5,""op"":""MUL""},{""a"":8,""b"":4,""op"":""DIV""},{""a"":8,""b"":2,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":2,""b"":2,""op"":""MUL""},{""a"":8,""b"":4,""op"":""DIV""},{""a"":2,""b"":7,""op"":""MUL""},{""a"":2,""b"":10,""op"":""MUL""},{""a"":3,""b"":2,""op"":""MUL""},{""a"":6,""b"":3,""op"":""DIV""},{""a"":2,""b"":7,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":16,""b"":2,""op"":""DIV""},{""a"":2,""b"":2,""op"":""MUL""},{""a"":2,""b"":8,""op"":""MUL""}],""targetFacts"":[{""a"":2,""b"":10,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""}]}";
+        const string _TestMulPracticeData = @"{""gameType"":""PRACTICE"",""version"":""1.0.0"",""facts"":[{""a"":2,""b"":10,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""},{""a"":2,""b"":2,""op"":""MUL""},{""a"":4,""b"":2,""op"":""DIV""},{""a"":2,""b"":3,""op"":""MUL""},{""a"":3,""b"":2,""op"":""MUL""},{""a"":6,""b"":2,""op"":""DIV""},{""a"":6,""b"":3,""op"":""DIV""},{""a"":2,""b"":4,""op"":""MUL""},{""a"":4,""b"":2,""op"":""MUL""},{""a"":8,""b"":2,""op"":""DIV""},{""a"":8,""b"":4,""op"":""DIV""},{""a"":2,""b"":5,""op"":""MUL""},{""a"":5,""b"":2,""op"":""MUL""},{""a"":10,""b"":2,""op"":""DIV""},{""a"":10,""b"":5,""op"":""DIV""},{""a"":2,""b"":6,""op"":""MUL""},{""a"":6,""b"":2,""op"":""MUL""},{""a"":12,""b"":2,""op"":""DIV""},{""a"":12,""b"":6,""op"":""DIV""},{""a"":2,""b"":7,""op"":""MUL""},{""a"":7,""b"":2,""op"":""MUL""},{""a"":14,""b"":2,""op"":""DIV""},{""a"":14,""b"":7,""op"":""DIV""},{""a"":2,""b"":8,""op"":""MUL""},{""a"":8,""b"":2,""op"":""MUL""},{""a"":16,""b"":2,""op"":""DIV""},{""a"":16,""b"":8,""op"":""DIV""},{""a"":2,""b"":9,""op"":""MUL""},{""a"":9,""b"":2,""op"":""MUL""},{""a"":18,""b"":2,""op"":""DIV""},{""a"":18,""b"":9,""op"":""DIV""},{""a"":10,""b"":10,""op"":""MUL""},{""a"":100,""b"":10,""op"":""DIV""}],""targetFacts"":[{""a"":2,""b"":10,""op"":""MUL""},{""a"":10,""b"":2,""op"":""MUL""},{""a"":20,""b"":2,""op"":""DIV""},{""a"":20,""b"":10,""op"":""DIV""}]}";
 
 #if UNITY_WEBGL
         [DllImport("__Internal")]
@@ -23,12 +27,13 @@ namespace LoL.Fluency
 #else
         static void _GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
         {
-            // no op
+            _InTestMode = true;
+            _TestGameIsReady(gameName, gameObjectName, functionName, sdkVersion, sdkParams);
         }
 
         static void _PostWindowMessage (string msg, string payload)
         {
-            // no op
+            _TestPostWindowMessage(msg, payload);
         }
 #endif
         static void _TestGameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
@@ -55,33 +60,71 @@ namespace LoL.Fluency
             SendLocalLanguageJson();
         }
 
+        // Only true if test mode is initialized from Init.
+        // When using GetStartData<> to initialize a session, callbacks will not have random latency.
+        static bool _InTestMode;
         static GameType _TestGameType;
+        static SDKOptions _TestSDKOptions;
         static string GetTestSessionData ()
         {
+            var concept = string.IsNullOrEmpty(_TestSDKOptions?.gameOptions?.forceTestConcept)
+                ? FluencySessionPracticeConcept.ADDITION
+                : _TestSDKOptions.gameOptions.ForceTestConcept;
+
+            switch (concept)
+            {
+                case FluencySessionPracticeConcept.MULTIPLICATION:
+                case FluencySessionPracticeConcept.SQUARE:
+                case FluencySessionPracticeConcept.TIMES_TWO:
+                case FluencySessionPracticeConcept.TIMES_TEN:
+                case FluencySessionPracticeConcept.TIMES_ZERO:
+                case FluencySessionPracticeConcept.TIMES_ELEVEN:
+                    concept = FluencySessionPracticeConcept.MULTIPLICATION;
+                    break;
+                case FluencySessionPracticeConcept.ADDITION:
+                case FluencySessionPracticeConcept.ADD_TEN:
+                case FluencySessionPracticeConcept.ADD_ZERO:
+                case FluencySessionPracticeConcept.DOUBLE:
+                default:
+                    concept = FluencySessionPracticeConcept.ADDITION;
+                    break;
+            }
+
+            string data = null;
             switch (_TestGameType)
             {
                 case GameType.NONE:
                     _TestGameType = GameType.TYPING;
-                    return _TestTypingData; 
+                    data = _TestTypingData;
+                    break;
                 case GameType.TYPING:
                     _TestGameType = GameType.ASSESS;
-                    return _TestAssessData;
+                    data = concept == FluencySessionPracticeConcept.ADDITION ? _TestAddAssessData : _TestMulAssessData;
+                    break;
                 case GameType.ASSESS:
                     _TestGameType = GameType.ESTABLISH;
-                    return _TestEstablishData;
+                    data = concept == FluencySessionPracticeConcept.ADDITION ? _TestAddEstablishData : _TestMulEstablishData;
+                    break;
                 case GameType.ESTABLISH:
                     _TestGameType = GameType.PRACTICE;
-                    return _TestPracticeData;
+                    data = concept == FluencySessionPracticeConcept.ADDITION ? _TestAddPracticeData : _TestMulPracticeData;
+                    break;
                 case GameType.PRACTICE: // Keep playing.
                 default:
                     return null;
             }
+
+            Debug.LogWarning($"[LoLFluencySDK] Using TEST data: {_TestGameType} concept: {concept}");
+            return data;
         }
 
         static void SendTestStartData ()
         {
             // Get session data progresses the _TestGameType to the next game state.
             string json = GetTestSessionData();
+
+            if (string.IsNullOrEmpty(json))
+                return;
 
             json = JsonUtility.ToJson(new KeyValueData { key = "start", value = json });
             _Instance.ReceiveData(json);
@@ -97,6 +140,7 @@ namespace LoL.Fluency
                     json = PlayerPrefs.GetString(_PlayerPrefsKey);
                     break;
                 case "saveState":
+                    PlayerPrefs.SetString(_PlayerPrefsKey, payload);
                     msg = "saveStateResult";
                     json = JsonUtility.ToJson(new SaveStateResults { success = true });
                     break;
@@ -141,6 +185,7 @@ namespace LoL.Fluency
             _OnGameStart = null;
             _OnLoadState = null;
             _OnSaveStateResults = null;
+            _OnUserSettings = null;
             _GameLanguage = null;
             _SessionResults = null;
             _SessionStartData = null;
@@ -153,6 +198,7 @@ namespace LoL.Fluency
         static Action<GameType> _OnGameStart;
         static Action<string> _OnLoadState;
         static Action<bool> _OnSaveStateResults;
+        static Action<UserSettings> _OnUserSettings;
 
         static Dictionary<string, string> _GameLanguage;
         static IResultable _SessionResults;
@@ -171,6 +217,12 @@ namespace LoL.Fluency
             return CreateSDK();
         }
 
+        public static void Init (Action<GameType> onGameStart, Action<UserSettings> onUserSettings, params GameType[] supportedGameTypes)
+        {
+            _OnUserSettings = onUserSettings;
+            Init(onGameStart, supportedGameTypes);
+        }
+
         public static void Init (Action<GameType> onGameStart, params GameType[] supportedGameTypes)
         {
             if (onGameStart == null)
@@ -181,18 +233,12 @@ namespace LoL.Fluency
 
             if (Game_Is_Ready == null)
             {
-                if (Debug.isDebugBuild)
-                    Game_Is_Ready = _TestGameIsReady;
-                else
-                    Game_Is_Ready = _GameIsReady;
+                Game_Is_Ready = _GameIsReady;
             }
 
             if (Post_Message == null)
             {
-                if (Debug.isDebugBuild)
-                    Post_Message = _TestPostWindowMessage;
-                else
-                    Post_Message = _PostWindowMessage;
+                Post_Message = _PostWindowMessage;
             }
 
             CreateSDK();
@@ -223,39 +269,33 @@ namespace LoL.Fluency
                 gameOptions = options
             };
 
+            _TestSDKOptions = sdkOptions;
+
             sdkOptions.supportedReceiverKeys = new string[_Receivers.Keys.Count];
             _Receivers.Keys.CopyTo(sdkOptions.supportedReceiverKeys, 0);
             var sdkOptionsJson = JsonUtility.ToJson(sdkOptions);
 
-            Game_Is_Ready(Application.productName, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version, sdkOptionsJson);
+            Game_Is_Ready(_GameKey, _Instance.gameObject.name, nameof(ReceiveData), FluencyClientInfo.Version, sdkOptionsJson);
         }
 
         public static TData GetStartData<TData> () where TData : class, ISessionStartData
         {
             if (_Instance == null)
             {
-                if (Debug.isDebugBuild)
-                {
-                    Debug.LogWarning($"[LoLFluencySDK] Using testing start data for {typeof(TData)}.");
-                    Game_Is_Ready = _TestGameIsReady;
-                    Post_Message = _TestPostWindowMessage;
-                    var gameType = GameType.PRACTICE;
-                    var dataType = typeof(TData);
-                    if (dataType == typeof(TypingData))
-                        gameType |= GameType.TYPING | GameType.ASSESS | GameType.ESTABLISH;
-                    else if (dataType == typeof(AssessData))
-                        gameType |= GameType.ASSESS | GameType.ESTABLISH;
-                    else if (dataType == typeof(EstablishData))
-                        gameType |= GameType.ESTABLISH;
+                Debug.LogWarning("[LoLFluencySDK] Trying to get start data before GameIsReady. Using testing data!");
+                Game_Is_Ready = _TestGameIsReady;
+                Post_Message = _TestPostWindowMessage;
+                var gameType = GameType.PRACTICE;
+                var dataType = typeof(TData);
+                if (dataType == typeof(TypingData))
+                    gameType |= GameType.TYPING | GameType.ASSESS | GameType.ESTABLISH;
+                else if (dataType == typeof(AssessData))
+                    gameType |= GameType.ASSESS | GameType.ESTABLISH;
+                else if (dataType == typeof(EstablishData))
+                    gameType |= GameType.ESTABLISH;
 
-                    Init(gt => { }, gameType);
-                    GameIsReady();
-                }
-                else
-                {
-                    Debug.LogError("[LoLFluencySDK] Trying to get start data before GameIsReady.");
-                    return null;
-                }
+                Init(gt => { }, gameType);
+                GameIsReady();
             }
 
             if (_SessionStartData is TData startData)
@@ -271,6 +311,44 @@ namespace LoL.Fluency
         {
             var postWindowMessage = Post_Message ?? _PostWindowMessage;
             postWindowMessage(msg, json);
+        }
+
+        /// <summary>
+        /// Signals that the game has started play or a replay.
+        /// Invoke on every play started.
+        /// </summary>
+        public static void PlayStarted ()
+        {
+            PostWindowMessage("playStarted", _EmptyJSON);
+        }
+
+        /// <summary>
+        /// Signals that the game has completed play.
+        /// Invoke at end of play on results screen.
+        /// </summary>
+        public static void PlayCompleted ()
+        {
+            PostWindowMessage("playCompleted", _EmptyJSON);
+        }
+
+        /// <summary>
+        /// Signals that the game should unloaded.
+        /// Invoke from button press on results screen.
+        /// Will show overlay popup to quit or return.
+        /// </summary>
+        public static void QuitGame ()
+        {
+            PostWindowMessage("quitGame", _EmptyJSON);
+        }
+
+        public static bool UpdateUserSettings (UserSettings userSettings)
+        {
+            if (userSettings == null)
+                return false;
+
+            var json = JsonUtility.ToJson(userSettings);
+            PostWindowMessage("updateUserSettings", json);
+            return true;
         }
 
         /// <summary>
@@ -489,6 +567,27 @@ namespace LoL.Fluency
             }
         }
 
+        static string _gameKey;
+        static string _GameKey
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_gameKey))
+                {
+                    _gameKey = string.Format("{0}_{1}",
+                        Application.productName,
+                        Application.companyName)
+                        .ToLower().Replace(" ", "_");
+
+                    // Truncate name if too long.
+                    if (_gameKey.Length > 40)
+                        _gameKey = _gameKey.Substring(0, 40);
+                }
+
+                return _gameKey;
+            }
+        }
+
         static string _playerPrefsKey;
         static string _PlayerPrefsKey
         {
@@ -496,7 +595,8 @@ namespace LoL.Fluency
             {
                 if (string.IsNullOrEmpty(_playerPrefsKey))
                 {
-                    _playerPrefsKey = string.Format("{0}_{1}",
+                    _playerPrefsKey = string.Format("{0}_{1}_{2}",
+                        _GameKey,
                         _FluencyClientInfo.playerGameType.ToString().ToLower(),
                         _GetUserId);
                 }
@@ -512,6 +612,7 @@ namespace LoL.Fluency
             ["language"] = ReceiveLanguageJson,
             ["saveStateResult"] = ReceiveSaveStateResult,
             ["useTestData"] = ReceiveUseTestData,
+            ["userSettings"] = ReceiveUserSettings,
         };
 
         // called from jslib.
@@ -526,25 +627,41 @@ namespace LoL.Fluency
             var msgData = JsonUtility.FromJson<KeyValueData>(json);
             var key = msgData.key;
 
-            if ((key == "useTestData" && !Debug.isDebugBuild) || !_Receivers.TryGetValue(key, out var receiver))
+            if (!_Receivers.TryGetValue(key, out var receiver))
             {
                 Debug.LogWarning("[LoLFluencySDK] Receiver not supported in sdk: " + key);
+                return;
+            }
+
+            // Add latency to test callback.
+            if (_InTestMode)
+            {
+                StartCoroutine(_WaitThenRespond(receiver, msgData.value));
                 return;
             }
 
             receiver?.Invoke(msgData.value);
         }
 
+        IEnumerator _WaitThenRespond (Action<string> callback, string data)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.6f));
+            callback?.Invoke(data);
+        }
+
         // message receivers
 
-        static void ReceiveUseTestData (string _)
+        static void ReceiveUseTestData (string json)
         {
-            if (!Debug.isDebugBuild)
-                return;
+            GameOptions gameOptions = null;
+            if (!string.IsNullOrEmpty(json) && json.StartsWith("{") && json != _EmptyJSON)
+            {
+                gameOptions = JsonUtility.FromJson<GameOptions>(json);
+            }
 
             Game_Is_Ready = _TestGameIsReady;
             Post_Message = _TestPostWindowMessage;
-            GameIsReady();
+            GameIsReady(gameOptions);
         }
 
         static void ReceiveStartData (string json)
@@ -576,6 +693,7 @@ namespace LoL.Fluency
             }
 
             // Assign the gametype sent from the player to the client info for ref.
+            _FluencyClientInfo.userId = expectedClientInfo.userId;
             _FluencyClientInfo.playerGameType = expectedClientInfo.GameType;
             switch (expectedClientInfo.GameType)
             {
@@ -631,6 +749,12 @@ namespace LoL.Fluency
         {
             var result = JsonUtility.FromJson<SaveStateResults>(json);
             _OnSaveStateResults?.Invoke(result.success);
+        }
+
+        static void ReceiveUserSettings (string json)
+        {
+            var userSettings = JsonUtility.FromJson<UserSettings>(json);
+            _OnUserSettings?.Invoke(userSettings);
         }
     }
 
@@ -737,12 +861,70 @@ namespace LoL.Fluency
         }
     }
 
+    [Serializable]
+    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
+    {
+        [SerializeField] List<TKey> _keys = new List<TKey>();
+        [SerializeField] List<TValue> _values = new List<TValue>();
+
+        public SerializableDictionary () : base() { }
+        public SerializableDictionary (int capacity) : base(capacity) { }
+        public SerializableDictionary (IEqualityComparer<TKey> comparer) : base(comparer) { }
+        public SerializableDictionary (IDictionary<TKey, TValue> dictionary) : base(dictionary) { }
+        public SerializableDictionary (int capacity, IEqualityComparer<TKey> comparer) : base(capacity, comparer) { }
+        public SerializableDictionary (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public SerializableDictionary (IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer) : base(dictionary, comparer) { }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize ()
+        {
+            for (int i = 0; i != Math.Min(_keys.Count, _values.Count); i++)
+                Add(_keys[i], _values[i]);
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize ()
+        {
+            _keys.Clear();
+            _values.Clear();
+
+            foreach (var kvp in this)
+            {
+                _keys.Add(kvp.Key);
+                _values.Add(kvp.Value);
+            }
+        }
+    }
+
+    [Serializable]
+    public class UserSettings
+    {
+        public bool musicOn;
+        public bool sfxOn;
+
+        // Just used to pass additional settings.
+        // Once known, we can fully integrate in all clients.
+        public SerializableDictionary<string, string> additionalSettings;
+    }
+
     // start data.
 
     [Serializable]
     public class GameOptions
     {
+        public string forceTestConcept;
 
+        UnityStringEnum<FluencySessionPracticeConcept> _forceTestConcept;
+        public FluencySessionPracticeConcept ForceTestConcept
+        {
+            get
+            {
+                return _forceTestConcept.Value(forceTestConcept);
+            }
+            set
+            {
+                forceTestConcept = value.ToString();
+                _forceTestConcept.Value(forceTestConcept, true);
+            }
+        }
     }
 
     public enum FluencyFactOperation
