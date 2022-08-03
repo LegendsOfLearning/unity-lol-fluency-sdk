@@ -474,7 +474,7 @@ namespace LoL.Fluency
                         if (localTimestamp > remoteTimestamp)
                         {
                             // Local data is more recent than remote data. Send to remote.
-                            SaveGameState(localState);
+                            SaveGameState(localState.data);
                             remoteStateData = localState;
                         }
                     }
