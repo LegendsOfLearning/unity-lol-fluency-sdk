@@ -1,8 +1,11 @@
 ﻿{
-    "entries":[
-        { "key": "inTyping", "value": "IN TYPING" },
-        { "key": "inAssess", "value": "IN ASSESS" },
-        { "key": "inEstablish", "value": "IN ESTABLISH" },
-        { "key": "inPractice", "value": "IN PRACTICE" }
-    ]
+    "_meta": {
+        "maxChars": {}
+    },
+    "en": {
+        "inTyping": "IN TYPING",
+        "inAssess": "IN ASSESS",
+        "inEstablish": "IN ESTABLISH",
+        "inPractice": "IN PRACTICE"
+    }
 }

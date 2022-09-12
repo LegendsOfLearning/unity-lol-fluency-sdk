@@ -186,9 +186,11 @@ namespace LoL.Fluency
             _OnLoadState = null;
             _OnSaveStateResults = null;
             _OnUserSettings = null;
+            _OnSpeakTextComplete = null;
             _GameLanguage = null;
             _SessionResults = null;
             _SessionStartData = null;
+            OnLanguageChanged = null;
             Game_Is_Ready = null;
             Post_Message = null;
         }
@@ -199,14 +201,17 @@ namespace LoL.Fluency
         static Action<string> _OnLoadState;
         static Action<bool> _OnSaveStateResults;
         static Action<UserSettings> _OnUserSettings;
+        static Action<string> _OnSpeakTextComplete;
 
-        static Dictionary<string, string> _GameLanguage;
+        static SerializableDictionary<string, string> _GameLanguage;
         static IResultable _SessionResults;
         static ISessionStartData _SessionStartData;
         const string _EmptyJSON = "{}";
 
         static Action<string, string, string, string, string> Game_Is_Ready;
         static Action<string, string> Post_Message;
+
+        public static event Action OnLanguageChanged;
 
         public static LoLFluencySDK InitEmbeddedPlayer (
             Action<string, string, string, string, string> embeddedGameIsReady,
@@ -411,17 +416,29 @@ namespace LoL.Fluency
                 return defaultValue;
             }
 
-            if (!_GameLanguage.TryGetValue(key, out defaultValue))
+            if (_GameLanguage.TryGetValue(key, out var value))
             {
-                Debug.LogWarning("[LoLFluencySDK] language key not found: " + key);
+                return value;
             }
 
+            Debug.LogWarning("[LoLFluencySDK] language key not found: " + key);
             return defaultValue;
         }
 
-        public static void SpeakText (string key)
+        public static string SpeakText (string key, Action<string> onComplete = null)
         {
-            PostWindowMessage("speakText", $@"{{ ""key"": ""{key}"" }}");
+            _OnSpeakTextComplete = onComplete;
+            var guidStr = Guid.NewGuid().ToString();
+            PostWindowMessage("speakText", $@"{{ ""key"": ""{key}"", ""guid"": ""{guidStr}"" }}");
+            return guidStr;
+        }
+
+        public static string SpeakTextRaw (string text, Action<string> onComplete = null)
+        {
+            _OnSpeakTextComplete = onComplete;
+            var guidStr = Guid.NewGuid().ToString();
+            PostWindowMessage("speakTextRaw", $@"{{ ""text"": ""{text}"", ""guid"": ""{guidStr}"" }}");
+            return guidStr;
         }
 
         public static void CancelSpeakText ()
@@ -613,6 +630,7 @@ namespace LoL.Fluency
             ["saveStateResult"] = ReceiveSaveStateResult,
             ["useTestData"] = ReceiveUseTestData,
             ["userSettings"] = ReceiveUserSettings,
+            ["speakTextComplete"] = ReceiveSpeakTextComplete,
         };
 
         // called from jslib.
@@ -737,12 +755,8 @@ namespace LoL.Fluency
 
         static void ReceiveLanguageJson (string json)
         {
-            var language = JsonUtility.FromJson<Language>(json);
-            _GameLanguage = new Dictionary<string, string>();
-            foreach (var entry in language.entries)
-            {
-                _GameLanguage[entry.key] = entry.value;
-            }
+            _GameLanguage = JsonUtility.FromJson<SerializableDictionary<string, string>>(json);
+            OnLanguageChanged?.Invoke();
         }
 
         static void ReceiveSaveStateResult (string json)
@@ -755,6 +769,16 @@ namespace LoL.Fluency
         {
             var userSettings = JsonUtility.FromJson<UserSettings>(json);
             _OnUserSettings?.Invoke(userSettings);
+        }
+
+        static void ReceiveSpeakTextComplete (string json)
+        {
+            if (_OnSpeakTextComplete != null && !string.IsNullOrEmpty(json))
+            {
+                var completedAudioHash = JsonUtility.FromJson<CompletedAudioData>(json);
+                _OnSpeakTextComplete.Invoke(completedAudioHash.guid);
+                _OnSpeakTextComplete = null;
+            }
         }
     }
 
@@ -817,12 +841,6 @@ namespace LoL.Fluency
     internal class SaveStateResults
     {
         public bool success = default;
-    }
-
-    [Serializable]
-    internal class Language
-    {
-        public KeyValueData[] entries = default;
     }
 
     [Serializable]
@@ -899,10 +917,17 @@ namespace LoL.Fluency
     {
         public bool musicOn;
         public bool sfxOn;
+        public bool autoSpeak;
 
         // Just used to pass additional settings.
         // Once known, we can fully integrate in all clients.
         public SerializableDictionary<string, string> additionalSettings;
+    }
+
+    [Serializable]
+    public class CompletedAudioData
+    {
+        public string guid;
     }
 
     // start data.

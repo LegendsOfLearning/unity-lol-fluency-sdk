@@ -57,6 +57,7 @@ namespace LoL.Fluency
             // _SDK = LoLFluencySDK.InitEmbeddedPlayer(GameIsReady, PostWindowMessage);
             // Will use embedded test data.
             _SDK = LoLFluencySDK.InitEmbeddedPlayer(null, null);
+            SendLanguage();
         }
 
         void GameIsReady (string gameName, string gameObjectName, string functionName, string sdkVersion, string sdkParams)
@@ -64,6 +65,8 @@ namespace LoL.Fluency
             Debug.Log($"{gameName} {gameObjectName} {functionName} {sdkVersion} {sdkParams}");
 
             SendUserSettings(_userSettings);
+
+            SendLanguage();
 
             // Make REST call for user data.
             _fluencyRequest.GetFluencySessionActivity(OnSessionActivity);
@@ -76,6 +79,17 @@ namespace LoL.Fluency
 
             var json = JsonUtility.ToJson(new KeyValueData { key = "userSettings", value = JsonUtility.ToJson(userSettings) });
             _SDK.ReceiveData(json);
+        }
+
+        void SendLanguage ()
+        {
+#if UNITY_EDITOR
+            var file = System.IO.File.ReadAllText(System.IO.Path.Combine(Application.streamingAssetsPath, "language.json"));
+            var langObj = Newtonsoft.Json.Linq.JObject.Parse(file).GetValue("en");
+            var lang = langObj.ToObject<SerializableDictionary<string, string>>();
+            var json = JsonUtility.ToJson(new KeyValueData { key = "language", value = JsonUtility.ToJson(lang) });
+            _SDK.ReceiveData(json);
+#endif
         }
 
         void OnSessionActivity (string data, float blueLightPercentage)
